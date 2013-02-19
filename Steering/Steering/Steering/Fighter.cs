@@ -14,8 +14,8 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace Steering
 {
-   
-    public class Fighter:Entity
+
+    public class Fighter : Entity
     {
         public Vector3 targetPos = Vector3.Zero;
         private Fighter target = null;
@@ -36,7 +36,7 @@ namespace Steering
             set { path = value; }
         }
 
-        
+
         public Fighter Target
         {
             get { return target; }
@@ -101,7 +101,7 @@ namespace Steering
         }
 
         public override void LoadContent()
-        {            
+        {
             model = XNAGame.Instance().Content.Load<Model>(modelName);
             worldTransform = Matrix.CreateWorld(pos, look, up);
 
@@ -114,12 +114,12 @@ namespace Steering
 
         public override void UnloadContent()
         {
-            
+
         }
 
         public override void Update(GameTime gameTime)
         {
-            float timeDelta = (float) gameTime.ElapsedGameTime.TotalSeconds;
+            float timeDelta = (float)gameTime.ElapsedGameTime.TotalSeconds;
             float smoothRate;
             steeringBehaviours.timeDelta = timeDelta;
             force = steeringBehaviours.calculate();
@@ -178,16 +178,16 @@ namespace Steering
                     SteeringBehaviours.checkNaN(ref up, Vector3.Up);
                 }
             }
-            
+
             if (look != basis)
             {
-                
-                float angle = (float)Math.Acos(Vector3.Dot(basis, look));                
+
+                float angle = (float)Math.Acos(Vector3.Dot(basis, look));
                 Vector3 axis = Vector3.Cross(basis, look);
 
                 quaternion = Quaternion.CreateFromAxisAngle(axis, angle);
                 quaternion.Normalize();
-                
+
                 worldTransform.Up = up;
                 worldTransform.Forward = look;
                 worldTransform.Right = right;
@@ -240,16 +240,18 @@ namespace Steering
             {
                 Line.DrawLine(pos, pos + (look * 10), Color.White);
                 Line.DrawLine(pos, pos + (up * 10), Color.Red);
-                Line.DrawLine(pos, pos + (right * 10), Color.Blue);                                
+                Line.DrawLine(pos, pos + (right * 10), Color.Blue);
             }
 
             if (drawFeelers)
             {
                 foreach (Vector3 feeler in feelers)
                 {
-                    Line.DrawLine(pos, feeler, Color.Chartreuse);                    
+                    Line.DrawLine(pos, feeler, Color.Chartreuse);
                 }
             }
+
+            path.Draw(gameTime);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Steering
 {
     public class Camera : Entity
     {
-        
+
         public Matrix projection;
         public Matrix view;
         private KeyboardState keyboardState;
@@ -55,7 +55,7 @@ namespace Steering
 
             int midX = GraphicsDeviceManager.DefaultBackBufferHeight / 2;
             int midY = GraphicsDeviceManager.DefaultBackBufferWidth / 2;
-            
+
             int deltaX = mouseX - midX;
             int deltaY = mouseY - midY;
 
@@ -65,19 +65,19 @@ namespace Steering
 
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
-                Vector3 newTargetPos= pos + (look * 100.0f);
+                Vector3 newTargetPos = pos + (look * 100.0f);
                 //newTargetPos.Y = 8;
                 XNAGame.Instance().Leader.targetPos = newTargetPos;
-                
+
             }
 
             if (mouseState.RightButton == ButtonState.Pressed)
             {
-                Vector3 newTargetPos = pos;
-                XNAGame.Instance().Leader.targetPos = newTargetPos;
+                Vector3 newTargetPos = pos + (look * 100.0f);
+                XNAGame.Instance().Leader.Path.Waypoints.Add(newTargetPos);
 
             }
-            
+
 
             if (keyboardState.IsKeyDown(Keys.LeftShift))
             {
@@ -86,7 +86,7 @@ namespace Steering
 
             if (keyboardState.IsKeyDown(Keys.W))
             {
-                walk(timeDelta);   
+                walk(timeDelta);
             }
 
             if (keyboardState.IsKeyDown(Keys.S))
@@ -102,10 +102,10 @@ namespace Steering
             if (keyboardState.IsKeyDown(Keys.D))
             {
                 strafe(timeDelta);
-            }          
+            }
             view = Matrix.CreateLookAt(pos, pos + look, up);
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), XNAGame.Instance().GraphicsDeviceManager.GraphicsDevice.Viewport.AspectRatio, 1.0f, 10000.0f);
-            
+
         }
 
         public Matrix getProjection()
@@ -118,6 +118,6 @@ namespace Steering
             return view;
         }
 
-        
+
     }
 }

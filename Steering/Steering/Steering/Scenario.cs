@@ -18,10 +18,10 @@ namespace Steering
 
         public static void setUpStateMachineDemo()
         {
-            List<Entity> children = XNAGame.Instance().Children;            
+            List<Entity> children = XNAGame.Instance().Children;
             Ground ground = new Ground();
             children.Add(ground);
-            XNAGame.Instance().Ground = ground;            
+            XNAGame.Instance().Ground = ground;
             AIFighter aiFighter = new AIFighter();
             aiFighter.pos = new Vector3(-20, 50, 50);
             aiFighter.maxSpeed = 16.0f;
@@ -39,7 +39,7 @@ namespace Steering
             children.Add(fighter);
 
             Fighter camFighter = new Fighter();
-            camFighter.Leader = fighter;            
+            camFighter.Leader = fighter;
             camFighter.offset = new Vector3(0, 5, 10);
             camFighter.pos = fighter.pos + camFighter.offset;
             camFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
@@ -60,7 +60,7 @@ namespace Steering
 
             Ground ground = new Ground();
             children.Add(ground);
-            XNAGame.Instance().Ground = ground;            
+            XNAGame.Instance().Ground = ground;
 
             Fighter fighter = new Fighter();
             fighter.ModelName = "USSPheonix";
@@ -77,7 +77,7 @@ namespace Steering
             fighter1.Target = fighter;
             fighter1.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.pursuit);
             fighter1.pos = new Vector3(-20, 20, -20);
-            children.Add(fighter1);                        
+            children.Add(fighter1);
         }
 
         public static void setUpWander()
@@ -103,7 +103,7 @@ namespace Steering
             Ground ground = new Ground();
             children.Add(ground);
             XNAGame.Instance().Ground = ground;
-      
+
         }
 
 
@@ -126,17 +126,18 @@ namespace Steering
                 child.pos.Y += 100;
             }
         }
-        
+
 
         public static void setUpBuckRogersDemo()
         {
             List<Entity> children = XNAGame.Instance().Children;
             Fighter leader = new Fighter();
-            leader.pos = new Vector3(10, 20, 20);            
-            leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.seek);
+            leader.pos = new Vector3(10, 20, 20);
             leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
             leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
-            leader.targetPos = new Vector3(0, 100, -450);
+            leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.follow_path);
+            leader.Path.Waypoints.Add(new Vector3(0, 100, -450));
+            leader.Path.DrawPath = true;
             children.Add(leader);
             XNAGame.Instance().Leader = leader;
 

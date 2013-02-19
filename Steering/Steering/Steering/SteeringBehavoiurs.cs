@@ -24,7 +24,7 @@ namespace Steering
         public enum CalculationMethods { WeightedTruncatedSum, WeightedTruncatedRunningSumWithPrioritisation, PrioritisedDithering };
         CalculationMethods calculationMethod;
 
-        private Dictionary<behaviour_type, float> weights = new Dictionary<behaviour_type,float>();
+        private Dictionary<behaviour_type, float> weights = new Dictionary<behaviour_type, float>();
 
         public enum behaviour_type
         {
@@ -63,7 +63,7 @@ namespace Steering
 
         public void turnOffAll()
         {
-            flags = (int) SteeringBehaviours.behaviour_type.none;
+            flags = (int)SteeringBehaviours.behaviour_type.none;
         }
 
         public SteeringBehaviours(Fighter entity)
@@ -74,7 +74,7 @@ namespace Steering
             XNAGame.Instance().Children.Add(sphere);
             wanderTarget = new Vector3(randomClamped(), randomClamped(), randomClamped());
             wanderTarget.Normalize();
-            
+
             weights.Add(behaviour_type.allignment, 1.0f);
             weights.Add(behaviour_type.cohesion, 2.0f);
             weights.Add(behaviour_type.obstacle_avoidance, 20.0f);
@@ -94,18 +94,18 @@ namespace Steering
         }
 
         Vector3 evade()
-        {            
+        {
             return Vector3.Zero;
         }
 
         Vector3 obstacleAvoidance()
         {
             Vector3 force = Vector3.Zero;
-            makeFeelers();            
+            makeFeelers();
             List<Sphere> tagged = new List<Sphere>();
             float minBoxLength = 20.0f;
-	        float boxLength = minBoxLength + ((fighter.velocity.Length()/fighter.maxSpeed) * minBoxLength * 2.0f);
-            
+            float boxLength = minBoxLength + ((fighter.velocity.Length() / fighter.maxSpeed) * minBoxLength * 2.0f);
+
             if (float.IsNaN(boxLength))
             {
                 System.Console.WriteLine("NAN");
@@ -128,9 +128,9 @@ namespace Steering
             }
 
             float distToClosestIP = float.MaxValue;
-	        Sphere closestIntersectingObstacle = null;
-	        Vector3 localPosOfClosestObstacle = Vector3.Zero;
-	        Vector3 intersection = Vector3.Zero;
+            Sphere closestIntersectingObstacle = null;
+            Vector3 localPosOfClosestObstacle = Vector3.Zero;
+            Vector3 intersection = Vector3.Zero;
 
             Matrix localTransform = Matrix.Invert(fighter.worldTransform);
             foreach (Obstacle o in tagged)
@@ -138,53 +138,53 @@ namespace Steering
                 Vector3 localPos = Vector3.Transform(o.pos, localTransform);
                 //Vector3 localPos = o.pos - fighter.pos;
 
-		        // If the local position has a positive Z value then it must lay
-		        // behind the agent. (in which case it can be ignored)
-                if (localPos.Z <=0)
-		        {
-			        // If the distance from the x axis to the object's position is less
-			        // than its radius + half the width of the detection box then there
-			        // is a potential intersection.
-			        float expandedRadius = fighter.BoundingSphere.Radius + o.Radius;
-			        if ((Math.Abs(localPos.Y) < expandedRadius) && (Math.Abs(localPos.X) < expandedRadius))
-			        {
-				        // Now to do a ray/sphere intersection test. The center of the				
-				        // Create a temp Entity to hold the sphere in local space
+                // If the local position has a positive Z value then it must lay
+                // behind the agent. (in which case it can be ignored)
+                if (localPos.Z <= 0)
+                {
+                    // If the distance from the x axis to the object's position is less
+                    // than its radius + half the width of the detection box then there
+                    // is a potential intersection.
+                    float expandedRadius = fighter.BoundingSphere.Radius + o.Radius;
+                    if ((Math.Abs(localPos.Y) < expandedRadius) && (Math.Abs(localPos.X) < expandedRadius))
+                    {
+                        // Now to do a ray/sphere intersection test. The center of the				
+                        // Create a temp Entity to hold the sphere in local space
                         Sphere tempSphere = new Sphere(expandedRadius);
-				        tempSphere.pos = localPos;				            
+                        tempSphere.pos = localPos;
 
-				        // Create a ray
-				        Ray ray = new Ray();
-				        ray.pos = new Vector3(0, 0, 0);
+                        // Create a ray
+                        Ray ray = new Ray();
+                        ray.pos = new Vector3(0, 0, 0);
                         ray.look = fighter.basis;
 
-				        // Find the point of intersection
+                        // Find the point of intersection
                         if (tempSphere.closestRayIntersects(ray, Vector3.Zero, ref intersection) == false)
                         {
                             return Vector3.Zero;
                         }
 
-				        // Now see if its the closest, there may be other intersecting spheres
-				        float dist = intersection.Length();
-				        if (dist < distToClosestIP)
-				        {
-					        dist = distToClosestIP;
+                        // Now see if its the closest, there may be other intersecting spheres
+                        float dist = intersection.Length();
+                        if (dist < distToClosestIP)
+                        {
+                            dist = distToClosestIP;
                             closestIntersectingObstacle = o;
-					        localPosOfClosestObstacle = localPos;
-				        }				
-			        }
-		        }              
-		        if (closestIntersectingObstacle != null)
-		        {
-			        // Now calculate the force
-			        // Calculate Z Axis braking  force
-			        float multiplier = 200 * (1.0f + (boxLength - localPosOfClosestObstacle.Z) / boxLength);
+                            localPosOfClosestObstacle = localPos;
+                        }
+                    }
+                }
+                if (closestIntersectingObstacle != null)
+                {
+                    // Now calculate the force
+                    // Calculate Z Axis braking  force
+                    float multiplier = 200 * (1.0f + (boxLength - localPosOfClosestObstacle.Z) / boxLength);
 
-                    
-			
-			        //calculate the lateral force
+
+
+                    //calculate the lateral force
                     float expandedRadius = fighter.BoundingSphere.Radius + o.Radius;
-			        force.X = (expandedRadius - Math.Abs(localPosOfClosestObstacle.X))  * multiplier;
+                    force.X = (expandedRadius - Math.Abs(localPosOfClosestObstacle.X)) * multiplier;
 
                     force.Y = (expandedRadius - -Math.Abs(localPosOfClosestObstacle.X)) * multiplier;
 
@@ -192,7 +192,7 @@ namespace Steering
                     {
                         force.X = -force.X;
                     }
-                    
+
                     if (localPosOfClosestObstacle.Y > 0)
                     {
                         force.Y = -force.Y;
@@ -207,28 +207,28 @@ namespace Steering
                     {
                         force.Y = -force.Y;
                     }*/
-                    
+
                     Line.DrawLine(fighter.pos, fighter.pos + fighter.look * boxLength, Color.BlueViolet);
-			        //apply a braking force proportional to the obstacle's distance from
-			        //the vehicle.
-			        const float brakingWeight = 40.0f;
+                    //apply a braking force proportional to the obstacle's distance from
+                    //the vehicle.
+                    const float brakingWeight = 40.0f;
                     force.Z = (closestIntersectingObstacle.Radius -
                                        localPosOfClosestObstacle.Z) *
                                        brakingWeight;
 
-			        //finally, convert the steering vector from local to world space
-                    force = Vector3.Transform(force, fighter.worldTransform);                    
-                }                
+                    //finally, convert the steering vector from local to world space
+                    force = Vector3.Transform(force, fighter.worldTransform);
+                }
             }
-             
+
             fighter.DrawFeelers = false;
             fighter.DrawAxis = false;
             checkNaN(force);
-            
+
             return force;
         }
 
-        static public bool checkNaN(ref Vector3  v, Vector3 def)
+        static public bool checkNaN(ref Vector3 v, Vector3 def)
         {
             if (float.IsNaN(v.X))
             {
@@ -278,8 +278,8 @@ namespace Steering
             //target = offset + fighter.Leader.pos;
             target = Vector3.Transform(offset, fighter.Leader.worldTransform);
 
-            float dist = (target - fighter.pos).Length();     
-      
+            float dist = (target - fighter.pos).Length();
+
             float lookAhead = (dist / fighter.maxSpeed);
 
             target = target + (lookAhead * fighter.Leader.velocity);
@@ -299,7 +299,7 @@ namespace Steering
             float lookAhead = (dist / fighter.maxSpeed);
 
             Vector3 target = fighter.Target.pos + (lookAhead * fighter.Target.velocity);
-            sphere.pos = target;          
+            sphere.pos = target;
             return seek(target);
         }
 
@@ -320,7 +320,7 @@ namespace Steering
         }
 
         Vector3 seek(Vector3 targetPos)
-        {           
+        {
             Vector3 desiredVelocity;
 
             desiredVelocity = targetPos - fighter.pos;
@@ -333,8 +333,8 @@ namespace Steering
 
         float randomClamped()
         {
-            return 1.0f - ((float) random.NextDouble() * 2.0f); 
-        }      
+            return 1.0f - ((float)random.NextDouble() * 2.0f);
+        }
 
         Vector3 wander()
         {
@@ -375,7 +375,7 @@ namespace Steering
                 {
                     float distance = Math.Abs(dot - worldPlane.D);
                     force += worldPlane.Normal * distance;
-                }           
+                }
             }
 
             if (force.Length() > 0.0)
@@ -392,7 +392,7 @@ namespace Steering
 
         private void makeFeelers()
         {
- 	        fighter.Feelers.Clear();
+            fighter.Feelers.Clear();
             float feelerDistance = 20.0f;
             // Make the forward feeler
             Vector3 newFeeler = fighter.basis * feelerDistance;
@@ -404,7 +404,7 @@ namespace Steering
             newFeeler = Vector3.Transform(newFeeler, fighter.worldTransform);
             fighter.Feelers.Add(newFeeler);
             newFeeler = fighter.basis * feelerDistance;
-            newFeeler = Vector3.Transform(newFeeler, Matrix.CreateRotationY(- MathHelper.PiOver4));
+            newFeeler = Vector3.Transform(newFeeler, Matrix.CreateRotationY(-MathHelper.PiOver4));
             newFeeler = Vector3.Transform(newFeeler, fighter.worldTransform);
             fighter.Feelers.Add(newFeeler);
 
@@ -422,7 +422,7 @@ namespace Steering
         public Vector3 arrive(Vector3 target)
         {
             Vector3 toTarget = target - fighter.pos;
-            
+
             float slowingDistance = 8.0f;
             float distance = toTarget.Length();
             if (distance == 0.0f)
@@ -437,7 +437,7 @@ namespace Steering
             Vector3 desired = clamped * (toTarget / distance);
 
             checkNaN(desired);
-          
+
 
             return desired - fighter.velocity;
         }
@@ -453,7 +453,7 @@ namespace Steering
                 return calculateWeightedPrioritised();
             }
 
-            return Vector3.Zero;            
+            return Vector3.Zero;
         }
 
         private Vector3 calculateWeightedPrioritised()
@@ -461,7 +461,7 @@ namespace Steering
             Vector3 force = Vector3.Zero;
             Vector3 steeringForce = Vector3.Zero;
 
-            
+
             if (isOn(behaviour_type.obstacle_avoidance))
             {
                 force = obstacleAvoidance() * weights[behaviour_type.obstacle_avoidance];
@@ -534,27 +534,33 @@ namespace Steering
                     return steeringForce;
                 }
             }
-            
+
             return steeringForce;
         }
 
         private Vector3 followPath()
         {
+            var nextWaypointNullable = fighter.Path.NextWaypoint();
+
+            if (nextWaypointNullable == null) return Vector3.Zero;
+
+            var nextWaypoint = nextWaypointNullable.Value;
+
             float epsilon = 5.0f;
-            float dist = (fighter.pos - fighter.Path.NextWaypoint()).Length();
+            float dist = (fighter.pos - nextWaypoint).Length();
             if (dist < epsilon)
             {
                 fighter.Path.AdvanceToNext();
             }
-            if ((! fighter.Path.Looped) && fighter.Path.IsLast())
+            if ((!fighter.Path.Looped) && fighter.Path.IsLast())
             {
-                return arrive(fighter.Path.NextWaypoint());
+                return arrive(nextWaypoint);
             }
             else
             {
-                return seek(fighter.Path.NextWaypoint());
+                return seek(nextWaypoint);
             }
-       }
+        }
 
         private bool accumulateForce(ref Vector3 runningTotal, Vector3 force)
         {
@@ -567,7 +573,7 @@ namespace Steering
             }
 
             float toAdd = force.Length();
-           
+
 
             if (toAdd < remaining)
             {

@@ -13,17 +13,17 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace Steering
 {
-    class Path:Entity
+    class Path : Entity
     {
 
         public override void LoadContent()
-        {                        
+        {
 
         }
 
         public override void UnloadContent()
         {
-            
+
         }
 
         public override void Update(GameTime gameTime)
@@ -51,8 +51,8 @@ namespace Steering
         public bool DrawPath
         {
             get { return draw; }
-            set 
-            { 
+            set
+            {
                 draw = value;
                 if (value == true)
                 {
@@ -65,9 +65,9 @@ namespace Steering
             }
         }
 
-        public Vector3 NextWaypoint()
+        public Vector3? NextWaypoint()
         {
-            return waypoints[next];
+            return (next < waypoints.Count) ? waypoints[next] : (Vector3?)null;
         }
 
         public bool IsLast()
@@ -78,7 +78,7 @@ namespace Steering
         public void AdvanceToNext()
         {
             if (looped)
-            {                
+            {
                 next = (next + 1) % waypoints.Count();
                 System.Console.WriteLine(next);
             }
@@ -103,13 +103,13 @@ namespace Steering
             set { waypoints = value; }
         }
 
-        private bool looped; 
-    
+        private bool looped;
+
 
         public bool Looped
         {
-          get { return looped; }
-          set { looped = value; }
+            get { return looped; }
+            set { looped = value; }
         }
     }
 }
