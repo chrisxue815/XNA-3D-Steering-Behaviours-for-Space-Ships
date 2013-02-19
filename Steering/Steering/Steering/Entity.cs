@@ -39,22 +39,22 @@ namespace Steering
 
         public Model model = null;
         public Vector3 pos = Vector3.Zero;
-        
+
         public Vector3 velocity = Vector3.Zero;
         public Quaternion quaternion;
-       
+
         static Random randomize = new Random();
-        
-        public Vector3 right = new Vector3(1.0f, 0.0f, 0.0f);
-        public Vector3 up = new Vector3(0.0f, 1.0f, 0.0f);
-        public Vector3 look = new Vector3(0, 0, -1);
-        public Vector3 basis = new Vector3(0, 0, -1);
-        public Vector3 globalUp = new Vector3(0, 0, 1);
+
+        public Vector3 right = Vector3.Right;
+        public Vector3 up = Vector3.Up;
+        public Vector3 look = Vector3.Forward;
+        public Vector3 basis = Vector3.Forward;
+        public Vector3 globalUp = Vector3.Backward;
 
 
         public float scale;
 
-        
+
         float mass = 1.0f;
 
         public Matrix worldTransform = new Matrix();
@@ -72,23 +72,22 @@ namespace Steering
 
         public void yaw(float angle)
         {
-            Matrix T = Matrix.CreateRotationY(angle);
-            right = Vector3.Transform(right, T);
+            var T = Matrix.CreateFromAxisAngle(up, angle);
             look = Vector3.Transform(look, T);
+            right = Vector3.Cross(look, up);
         }
 
         public void pitch(float angle)
         {
-            Matrix T = Matrix.CreateFromAxisAngle(right, angle);
-            //_up = Vector3.Transform(_up, T);
+            var T = Matrix.CreateFromAxisAngle(right, angle);
             look = Vector3.Transform(look, T);
+            up = Vector3.Cross(right, look);
         }
 
         public void walk(float timeDelta)
         {
             float speed = 5.0f;
-            pos += look * timeDelta * speed ;
-
+            pos += look * timeDelta * speed;
         }
 
         public void strafe(float timeDelta)
@@ -131,7 +130,7 @@ namespace Steering
             {
                 angle = (MathHelper.Pi * 2.0f) - angle;
             }
-            
+
             return angle;
         }
     }
