@@ -12,7 +12,7 @@ TestResults
 *.suo
 *.user
 *.sln.docstates
-*.Debug.cachefile
+*.cachefile
 
 # Build results
 [Dd]ebug/
