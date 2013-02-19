@@ -136,7 +136,7 @@ namespace Steering
             leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
             leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
             leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.follow_path);
-            leader.Path.Waypoints.Add(new Vector3(0, 100, -450));
+            leader.Path.Waypoints.Add(new Vector3(0, 0, 0));
             leader.Path.DrawPath = true;
             children.Add(leader);
             XNAGame.Instance().Leader = leader;

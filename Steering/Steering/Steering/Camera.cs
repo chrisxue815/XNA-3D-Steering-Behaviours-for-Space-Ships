@@ -15,11 +15,16 @@ namespace Steering
 {
     public class Camera : Entity
     {
-
         public Matrix projection;
         public Matrix view;
         private KeyboardState keyboardState;
         private MouseState mouseState;
+
+        private int perspective = 1;
+        private bool wasLeftButtonPressed = false;
+        private Vector3 oldPosition;
+        private Vector3 oldLook;
+        private Vector3 oldUp;
 
         public override void Draw(GameTime gameTime)
         {
@@ -59,49 +64,66 @@ namespace Steering
             int deltaX = mouseX - midX;
             int deltaY = mouseY - midY;
 
-            yaw(-(float)deltaX / 100.0f);
-            pitch(-(float)deltaY / 100.0f);
+            yaw(-deltaX / 100.0f);
+            pitch(-deltaY / 100.0f);
             Mouse.SetPosition(midX, midY);
 
-            if (mouseState.LeftButton == ButtonState.Pressed)
-            {
-                Vector3 newTargetPos = pos + (look * 100.0f);
-                //newTargetPos.Y = 8;
-                XNAGame.Instance().Leader.targetPos = newTargetPos;
+            bool leftButtonPressed = (mouseState.LeftButton == ButtonState.Pressed);
 
-            }
-
-            if (mouseState.RightButton == ButtonState.Pressed)
+            if (!wasLeftButtonPressed && leftButtonPressed)
             {
                 Vector3 newTargetPos = pos + (look * 100.0f);
                 XNAGame.Instance().Leader.Path.Waypoints.Add(newTargetPos);
-
             }
 
+            wasLeftButtonPressed = leftButtonPressed;
 
             if (keyboardState.IsKeyDown(Keys.LeftShift))
             {
                 timeDelta *= 20.0f;
             }
 
-            if (keyboardState.IsKeyDown(Keys.W))
+            if (perspective != 1 && keyboardState.IsKeyDown(Keys.D1))
             {
-                walk(timeDelta);
+                pos = oldPosition;
+                look = oldLook;
+                up = oldUp;
+                perspective = 1;
+            }
+            if (perspective != 2 && keyboardState.IsKeyDown(Keys.D2))
+            {
+                oldPosition = pos;
+                oldLook = look;
+                oldUp = up;
+                perspective = 2;
             }
 
-            if (keyboardState.IsKeyDown(Keys.S))
+            switch (perspective)
             {
-                walk(-timeDelta);
-            }
-
-            if (keyboardState.IsKeyDown(Keys.A))
-            {
-                strafe(-timeDelta);
-            }
-
-            if (keyboardState.IsKeyDown(Keys.D))
-            {
-                strafe(timeDelta);
+                case 1:
+                    if (keyboardState.IsKeyDown(Keys.W))
+                    {
+                        walk(timeDelta);
+                    }
+                    if (keyboardState.IsKeyDown(Keys.S))
+                    {
+                        walk(-timeDelta);
+                    }
+                    if (keyboardState.IsKeyDown(Keys.A))
+                    {
+                        strafe(-timeDelta);
+                    }
+                    if (keyboardState.IsKeyDown(Keys.D))
+                    {
+                        strafe(timeDelta);
+                    }
+                    break;
+                case 2:
+                    var leader = XNAGame.Instance().Leader;
+                    pos = leader.pos - leader.look*10;
+                    look = leader.look;
+                    up = leader.up;
+                    break;
             }
             view = Matrix.CreateLookAt(pos, pos + look, up);
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), XNAGame.Instance().GraphicsDeviceManager.GraphicsDevice.Viewport.AspectRatio, 1.0f, 10000.0f);
