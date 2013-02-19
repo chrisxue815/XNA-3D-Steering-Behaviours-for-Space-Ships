@@ -19,7 +19,7 @@ namespace Steering
         public AIFighter()
             : base()
         {
-            ModelName = "Ship1";
+            ModelName = "USSPheonix";
         }
 
         public override void Update(GameTime gameTime)

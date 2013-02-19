@@ -30,7 +30,7 @@ namespace Steering
             children.Add(aiFighter);
 
             Fighter fighter = new Fighter();
-            fighter.ModelName = "ship2";
+            fighter.ModelName = "USSPheonix";
             fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.arrive);
             fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
             fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
@@ -63,7 +63,7 @@ namespace Steering
             XNAGame.Instance().Ground = ground;            
 
             Fighter fighter = new Fighter();
-            fighter.ModelName = "ship1";
+            fighter.ModelName = "USSPheonix";
             fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.arrive);
             fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
             fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
@@ -73,7 +73,7 @@ namespace Steering
             children.Add(fighter);
 
             Fighter fighter1 = new Fighter();
-            fighter1.ModelName = "ship2";
+            fighter1.ModelName = "USSPheonix";
             fighter1.Target = fighter;
             fighter1.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.pursuit);
             fighter1.pos = new Vector3(-20, 20, -20);

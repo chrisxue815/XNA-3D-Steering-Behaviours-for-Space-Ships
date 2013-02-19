@@ -22,6 +22,7 @@ namespace Steering
         public Vector3 offset;
         private Path path = new Path();
         string modelName;
+        private float scale = 0.01f;
 
         public string ModelName
         {
@@ -96,7 +97,7 @@ namespace Steering
             steeringBehaviours = new SteeringBehaviours(this);
             drawAxis = false;
             Solid = true;
-            modelName = "fighter";
+            modelName = "USSPheonix";
         }
 
         public override void LoadContent()
@@ -190,7 +191,7 @@ namespace Steering
                 worldTransform.Up = up;
                 worldTransform.Forward = look;
                 worldTransform.Right = right;
-                worldTransform = Matrix.CreateWorld(pos, look, up);
+                worldTransform = Matrix.CreateScale(scale) * Matrix.CreateWorld(pos, look, up);
                 checkNan(worldTransform);
             }
             else
