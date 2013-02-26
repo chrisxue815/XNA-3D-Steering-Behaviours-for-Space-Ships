@@ -15,6 +15,15 @@ namespace Steering
 {
     public abstract class Entity
     {
+        private int cell;
+
+        public int Cell
+        {
+            get { return cell; }
+            set { cell = value; }
+        }
+
+
         private bool tagged = false;
 
         public bool Tagged

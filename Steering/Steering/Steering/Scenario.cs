@@ -30,12 +30,7 @@ namespace Steering
         {
             Params.Load("flocking.properties");
             List<Entity> children = XNAGame.Instance().Children;
-            Ground ground = new Ground();
-            children.Add(ground);
-            XNAGame.Instance().Ground = ground;
             
-            
-
             Fighter bigFighter = new EliteFighter();
             bigFighter.ModelName = "python";
             bigFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
@@ -63,7 +58,6 @@ namespace Steering
                 fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.evade);
                 fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.sphere_constrain);
                 fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
-                fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
                 children.Add(fighter);                
             }
 

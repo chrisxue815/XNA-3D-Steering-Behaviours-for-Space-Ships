@@ -26,6 +26,7 @@ namespace Steering
         public enum CalculationMethods { WeightedTruncatedSum, WeightedTruncatedRunningSumWithPrioritisation, PrioritisedDithering };
         CalculationMethods calculationMethod;
 
+
         private int TagNeighbours(float inRange)
         {
             List<Entity> entities = XNAGame.Instance().Children;
@@ -34,15 +35,36 @@ namespace Steering
             {
                 if ((entity is Fighter) && (entity != fighter))
                 {
-                    Fighter neighbour = (Fighter)entity;
-                    if ((fighter.pos - neighbour.pos).Length() < inRange)
+                    entity.Tagged = false;
+                    // Check and see if the neighbour is in the same cell
+                    int cell = fighter.Cell;
+                    if (cell != -1)
                     {
-                        neighbour.Tagged = true;
-                        tagged++;
-                    }
-                    else
-                    {
-                        neighbour.Tagged = false;
+                        List<Cell> adjacentCells = XNAGame.Instance().Space.Cells[fighter.Cell].Adjacent;
+                        bool consider = false;
+                        for (int i = 0; i < adjacentCells.Count; i ++)
+                        {
+                            Cell adjacent = adjacentCells[i];
+                            if (entity.Cell == adjacent.Number)
+                            {
+                                consider = true;
+                                break;
+                            }
+                        }
+
+                        if (consider)
+                        {
+                            Fighter neighbour = (Fighter)entity;
+                            if ((fighter.pos - neighbour.pos).Length() < inRange)
+                            {
+                                neighbour.Tagged = true;
+                                tagged++;
+                            }
+                        }
+                        else
+                        {
+                            //Console.WriteLine();
+                        }
                     }
                 }
             }

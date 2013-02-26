@@ -75,6 +75,14 @@ namespace Steering
             return instance;
         }
 
+        Space space;
+
+        public Space Space
+        {
+            get { return space; }
+            set { space = value; }
+        }
+
         public XNAGame()
         {
             instance = this;
@@ -104,6 +112,7 @@ namespace Steering
             Mouse.SetPosition(midX, midY);
             children.Add(camera);
             Scenario.setUpFlockingDemo();
+            space = new Space();
             base.Initialize();
         }
 
@@ -176,6 +185,7 @@ namespace Steering
                 camera.right = camFighter.right;
             }
 
+            space.Partition();
             for (int i = children.Count - 1; i >= 0; i--)
             {
                 children[i].Update(gameTime);
