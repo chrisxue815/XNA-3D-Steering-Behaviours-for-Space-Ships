@@ -30,6 +30,12 @@ namespace Steering
         {
             Params.Load("flocking.properties");
             List<Entity> children = XNAGame.Instance().Children;
+<<<<<<< Updated upstream
+=======
+            //Ground ground = new Ground();
+            //children.Add(ground);
+            //XNAGame.Instance().Ground = ground;
+>>>>>>> Stashed changes
             
             Fighter bigFighter = new EliteFighter();
             bigFighter.ModelName = "python";
