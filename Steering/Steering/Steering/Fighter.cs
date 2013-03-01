@@ -122,7 +122,7 @@ namespace Steering
             float smoothRate;
             steeringBehaviours.timeDelta = timeDelta;
             force = steeringBehaviours.calculate();
-
+            SteeringBehaviours.checkNaN(force);
             Vector3 newAcceleration = force / Mass;
 
             if (timeDelta > 0)
@@ -139,8 +139,7 @@ namespace Steering
                 velocity.Normalize();
                 velocity *= maxSpeed;
             }
-            pos += velocity * timeDelta;
-            SteeringBehaviours.checkNaN(force);
+            pos += velocity * timeDelta;            
 
             // the length of this global-upward-pointing vector controls the vehicle's
             // tendency to right itself as it is rolled over from turning acceleration

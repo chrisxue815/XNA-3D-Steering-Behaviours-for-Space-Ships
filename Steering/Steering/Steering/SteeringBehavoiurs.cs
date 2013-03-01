@@ -25,50 +25,54 @@ namespace Steering
     
         public enum CalculationMethods { WeightedTruncatedSum, WeightedTruncatedRunningSumWithPrioritisation, PrioritisedDithering };
         CalculationMethods calculationMethod;
+        List<Entity> tagged = new List<Entity>();
 
-
-        private int TagNeighbours(float inRange)
+        private int TagNeighboursSimple(float inRange)
         {
-            List<Entity> entities = XNAGame.Instance().Children;
-            int tagged = 0;
-            foreach (Entity entity in entities)
-            {
-                if ((entity is Fighter) && (entity != fighter))
-                {
-                    entity.Tagged = false;
-                    // Check and see if the neighbour is in the same cell
-                    int cell = fighter.Cell;
-                    if (cell != -1)
-                    {
-                        List<Cell> adjacentCells = XNAGame.Instance().Space.Cells[fighter.Cell].Adjacent;
-                        bool consider = false;
-                        for (int i = 0; i < adjacentCells.Count; i ++)
-                        {
-                            Cell adjacent = adjacentCells[i];
-                            if (entity.Cell == adjacent.Number)
-                            {
-                                consider = true;
-                                break;
-                            }
-                        }
+            tagged.Clear();
 
-                        if (consider)
-                        {
-                            Fighter neighbour = (Fighter)entity;
-                            if ((fighter.pos - neighbour.pos).Length() < inRange)
-                            {
-                                neighbour.Tagged = true;
-                                tagged++;
-                            }
-                        }
-                        else
-                        {
-                            //Console.WriteLine();
-                        }
+            foreach (Entity entity in XNAGame.Instance().Children)
+            {
+                if ((entity != fighter) && (entity is Fighter))
+                {
+                    Fighter neighbour = (Fighter)entity;
+                    if ((fighter.pos - neighbour.pos).Length() < inRange)
+                    {
+                        tagged.Add(neighbour);                
                     }
                 }
             }
-            return tagged;
+            return tagged.Count;
+        }
+
+        private int TagNeighboursPartitioned(float inRange)
+        {           
+            BoundingBox expanded = new BoundingBox();
+            expanded.Min = new Vector3(fighter.pos.X - inRange, fighter.pos.Y - inRange, fighter.pos.Z - inRange);
+            expanded.Max = new Vector3(fighter.pos.X + inRange, fighter.pos.Y + inRange, fighter.pos.Z + inRange);
+
+            List<Cell> cells = XNAGame.Instance().Space.Cells;
+            tagged.Clear();
+            float range = inRange * inRange;
+            foreach (Cell cell in cells)
+            {
+                if (cell.Intersects(expanded))
+                {
+                    List<Entity> entities = cell.Entities;
+                    foreach (Entity entity in entities)
+                    {
+                        if (entity != fighter)
+                        {
+                            Fighter neighbour = (Fighter)entity;
+                            if ((fighter.pos - neighbour.pos).LengthSquared() < range)
+                            {
+                                tagged.Add(neighbour);
+                            }
+                        }
+                    }
+                }                
+            }
+            return this.tagged.Count;
         }
 
         public Vector3 cohesion()
@@ -76,40 +80,48 @@ namespace Steering
             List<Entity> entities = XNAGame.Instance().Children;
             Vector3 steeringForce = Vector3.Zero;
             Vector3 centreOfMass = Vector3.Zero;
-            int tagged = 0;
-            foreach (Entity entity in entities)
+            int taggedCount = 0;
+            foreach (Entity entity in tagged)
             {
-                if (entity.Tagged && entity != fighter)
+                if (entity != fighter)
                 {
                     centreOfMass += entity.pos;
-                    tagged++;
+                    taggedCount++;
                 }
             }
-            if (tagged > 0)
+            if (taggedCount > 0)
             {
-                centreOfMass /= (float) tagged;
-                steeringForce = seek(centreOfMass);
+                centreOfMass /= (float) taggedCount;
+                if (centreOfMass.LengthSquared() == 0)
+                {
+                    steeringForce = Vector3.Zero;
+                }
+                else
+                {
+                    steeringForce = Vector3.Normalize(seek(centreOfMass));
+                }
             }
-            return Vector3.Normalize(steeringForce);
+            checkNaN(steeringForce);
+            return steeringForce;
         }
 
         public Vector3 alignment()
         {
             List<Entity> entities = XNAGame.Instance().Children;
             Vector3 steeringForce = Vector3.Zero;
-            int tagged = 0;
-            foreach (Entity entity in entities)
+            int taggedCount = 0;
+            foreach (Entity entity in tagged)
             {
-                if (entity.Tagged && entity != fighter)
+                if (entity != fighter)
                 {
                     steeringForce += entity.look;
-                    tagged++;
+                    taggedCount++;
                 }
             }
 
-            if (tagged > 0)
+            if (taggedCount > 0)
             {
-                steeringForce /= (float) tagged;
+                steeringForce /= (float) taggedCount;
                 steeringForce -= fighter.look;
             }
             return steeringForce;
@@ -130,15 +142,11 @@ namespace Steering
 
         public Vector3 separation()
         {
-            List<Entity> entities = XNAGame.Instance().Children;
             Vector3 steeringForce = Vector3.Zero;
-            foreach (Entity entity in entities)
+            foreach (Entity entity in tagged)
             {
-                if (entity.Tagged && entity != fighter)
-                {
-                    Vector3 toEntity = fighter.pos - entity.pos;
-                    steeringForce += (Vector3.Normalize(toEntity) / toEntity.Length());
-                }
+                Vector3 toEntity = fighter.pos - entity.pos;
+                steeringForce += (Vector3.Normalize(toEntity) / toEntity.Length());                
             }
             return steeringForce;
         }
@@ -337,7 +345,7 @@ namespace Steering
              
             fighter.DrawFeelers = false;
             fighter.DrawAxis = false;
-            checkNaN(force);
+            
             
             return force;
         }
@@ -590,6 +598,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            checkNaN(force);
             if (isOn(behaviour_type.wall_avoidance))
             {
                 force = wall_avoidance() * Params.GetWeight("wall_avoidance_weight");
@@ -598,6 +607,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             if (isOn(behaviour_type.sphere_constrain))
             {
                 force = sphereConstrain(Params.GetFloat("world_range")) * Params.GetWeight("sphere_constrain_weight");
@@ -606,6 +616,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             if (isOn(behaviour_type.evade))
             {
                 force = evade() * Params.GetWeight("evade_weight");
@@ -614,11 +625,13 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             int tagged = 0;
             if (isOn(behaviour_type.separation) || isOn(behaviour_type.cohesion) || isOn(behaviour_type.alignment))
             {
-                tagged = TagNeighbours(Params.GetFloat("tag_range"));
+                tagged = TagNeighboursSimple(Params.GetFloat("tag_range"));
             }
+            
             if (isOn(behaviour_type.separation) && (tagged > 0) )
             {
                 force = separation() * Params.GetWeight("separation_weight");
@@ -627,6 +640,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             if (isOn(behaviour_type.alignment) && (tagged > 0))
             {
                 force = alignment() * Params.GetWeight("alignment_weight");
@@ -635,6 +649,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             if (isOn(behaviour_type.cohesion) && (tagged > 0))
             {
                 force = cohesion() * Params.GetWeight("cohesion_weight");
@@ -642,7 +657,8 @@ namespace Steering
                 {
                     return steeringForce;
                 }
-            }            
+            }
+            
             if (isOn(behaviour_type.seek))
             {
                 force = seek(fighter.targetPos) * Params.GetWeight("seek_weight");
@@ -651,6 +667,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             if (isOn(behaviour_type.arrive))
             {
                 force = arrive(fighter.targetPos) * Params.GetWeight("arrive_weight");
@@ -659,6 +676,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             if (isOn(behaviour_type.wander))
             {
                 force = wander() * Params.GetWeight("wander_weight");
@@ -667,6 +685,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             if (isOn(behaviour_type.pursuit))
             {
                 force = pursue() * Params.GetWeight("pursuit_weight");
@@ -675,6 +694,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             if (isOn(behaviour_type.offset_pursuit))
             {
                 force = offsetPursuit(fighter.offset) * Params.GetWeight("offset_pursuit_weight");
@@ -683,6 +703,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             if (isOn(behaviour_type.follow_path))
             {
                 force = followPath() * Params.GetWeight("follow_path_weight");
@@ -691,6 +712,7 @@ namespace Steering
                     return steeringForce;
                 }
             }
+            
             if (isOn(behaviour_type.random_walk))
             {
                 force = randomWalk() * Params.GetWeight("random_walk_weight");

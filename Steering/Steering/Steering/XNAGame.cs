@@ -184,7 +184,6 @@ namespace Steering
                 camera.up = camFighter.up;
                 camera.right = camFighter.right;
             }
-
             space.Partition();
             for (int i = children.Count - 1; i >= 0; i--)
             {
