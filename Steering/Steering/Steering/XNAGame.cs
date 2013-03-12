@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Threading;
 
 
 namespace Steering
@@ -56,6 +57,8 @@ namespace Steering
         }
         private Camera camera;
         List<Entity> children = new List<Entity>();
+
+        private Queue<Entity> updateQueue = new Queue<Entity>();
 
         public List<Entity> Children
         {
@@ -111,7 +114,7 @@ namespace Steering
             int midY = GraphicsDeviceManager.DefaultBackBufferWidth / 2;
             Mouse.SetPosition(midX, midY);
             children.Add(camera);
-            Scenario.setUpFlockingDemo();
+            Scenario.setUpBuckRogersDemo();
             space = new Space();
             base.Initialize();
         }
@@ -184,17 +187,32 @@ namespace Steering
                 camera.up = camFighter.up;
                 camera.right = camFighter.right;
             }
-            space.Partition();
+            //space.Partition();
             for (int i = children.Count - 1; i >= 0; i--)
             {
-                children[i].Update(gameTime);
                 if (children[i].Alive == false)
                 {
                     children.Remove(children[i]);
                 }
-            }            
-
+                else
+                {
+                    updateQueue.Enqueue(children[i]);
+                }
+            }
+            UpdateThread(gameTime, 0, children.Count);
             base.Update(gameTime);
+        }
+
+        private void UpdateThread(GameTime gameTime, int start, int end)
+        {
+            for (int i = 0 ; i < end ; i ++)
+            {
+                Entity entity = children[i];
+                if (entity != null)
+                {
+                    entity.Update(gameTime);
+                }
+            }
         }
 
         /// <summary>

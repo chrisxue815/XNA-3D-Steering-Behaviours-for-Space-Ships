@@ -15,6 +15,13 @@ namespace Steering
 {
     public abstract class Entity
     {
+        private bool needsUpdate;
+
+        public bool NeedsUpdate
+        {
+            get { return needsUpdate; }
+            set { needsUpdate = value; }
+        }
         private int cell;
 
         public int Cell

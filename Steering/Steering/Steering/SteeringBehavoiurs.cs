@@ -143,10 +143,14 @@ namespace Steering
         public Vector3 separation()
         {
             Vector3 steeringForce = Vector3.Zero;
-            foreach (Entity entity in tagged)
+            for (int i = 0; i < tagged.Count; i ++ )
             {
-                Vector3 toEntity = fighter.pos - entity.pos;
-                steeringForce += (Vector3.Normalize(toEntity) / toEntity.Length());                
+                Entity entity = tagged[i];
+                if (entity != null)
+                {
+                    Vector3 toEntity = fighter.pos - entity.pos;
+                    steeringForce += (Vector3.Normalize(toEntity) / toEntity.Length());
+                }
             }
             return steeringForce;
         }

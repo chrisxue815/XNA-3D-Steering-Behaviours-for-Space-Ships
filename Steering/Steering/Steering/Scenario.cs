@@ -219,6 +219,7 @@ namespace Steering
 
         public static void setUpBuckRogersDemo()
         {
+            Params.Load("avoidance.properties");
             List<Entity> children = XNAGame.Instance().Children;
             Fighter leader = new Fighter();
             leader.pos = new Vector3(10, 20, 20);            
