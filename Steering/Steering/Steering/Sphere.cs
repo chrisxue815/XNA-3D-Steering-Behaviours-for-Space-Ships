@@ -45,12 +45,6 @@ namespace Steering
         {
             worldTransform = Matrix.CreateScale(radius) * Matrix.CreateTranslation(pos);
 
-            RasterizerState originalState = XNAGame.Instance().GraphicsDevice.RasterizerState;
-
-            RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.FillMode = FillMode.WireFrame;
-            XNAGame.Instance().GraphicsDevice.RasterizerState = rasterizerState;
-
             // Do your wireframe drawing here...
 
             
@@ -69,11 +63,7 @@ namespace Steering
                     }
                     mesh.Draw();
                 }
-            }
-            if (originalState != null)
-            {
-                XNAGame.Instance().GraphicsDevice.RasterizerState = originalState;
-            }
+            }           
         }
 
         public bool closestRayIntersects(Ray ray, Vector3 point, ref Vector3 intersection)
