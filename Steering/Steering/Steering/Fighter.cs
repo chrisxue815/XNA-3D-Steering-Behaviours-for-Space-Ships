@@ -50,7 +50,7 @@ namespace Steering
         }
 
         SteeringBehaviours steeringBehaviours;
-        public float maxSpeed = 150.0f;
+        public float maxSpeed = Params.GetFloat("max_speed");
         bool drawAxis;
         List<Vector3> feelers = new List<Vector3>();
 
@@ -175,6 +175,7 @@ namespace Steering
                     up.Normalize();
                     SteeringBehaviours.checkNaN(ref up, Vector3.Up);
                 }
+                // Apply damping
                 velocity *= 0.99f;
             }
             

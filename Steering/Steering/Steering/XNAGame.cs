@@ -114,7 +114,7 @@ namespace Steering
             int midY = GraphicsDeviceManager.DefaultBackBufferWidth / 2;
             Mouse.SetPosition(midX, midY);
             children.Add(camera);
-            Scenario.setUpFlockingDemo();
+            Scenario.setUpBuckRogersDemo();
             space = new Space();
             base.Initialize();
         }
@@ -199,6 +199,7 @@ namespace Steering
                     updateQueue.Enqueue(children[i]);
                 }
             }
+
             UpdateThread(gameTime, 0, children.Count);
             base.Update(gameTime);
         }

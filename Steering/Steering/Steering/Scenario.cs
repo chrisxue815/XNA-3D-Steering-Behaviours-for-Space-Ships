@@ -62,7 +62,7 @@ namespace Steering
                 children.Add(fighter);                
             }
 
-            int numObstacles = 5;
+            int numObstacles = 0;
             float dist = (range * 2) / numObstacles;
             for (float x = - range ; x < range ; x+= dist)
             {
