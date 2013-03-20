@@ -223,7 +223,7 @@ namespace Steering
             List<Entity> children = XNAGame.Instance().Children;
             Fighter leader = new Fighter();
             leader.pos = new Vector3(10, 20, 20);            
-            leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.seek);
+            leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.arrive);
             leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
             leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
             leader.targetPos = new Vector3(0, 100, -450);
