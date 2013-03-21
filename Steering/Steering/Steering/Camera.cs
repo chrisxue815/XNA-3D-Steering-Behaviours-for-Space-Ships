@@ -23,11 +23,13 @@ namespace Steering
 
         public override void Draw(GameTime gameTime)
         {
+            /*
             SpriteFont spriteFont = XNAGame.Instance().SpriteFont;
             XNAGame.Instance().SpriteBatch.DrawString(spriteFont, "Pos: " + pos.X + " " + pos.Y + " " + pos.Z, new Vector2(500, 10), Color.White);
             XNAGame.Instance().SpriteBatch.DrawString(spriteFont, "Look: " + look.X + " " + look.Y + " " + look.Z, new Vector2(500, 30), Color.White);
             XNAGame.Instance().SpriteBatch.DrawString(spriteFont, "Right: " + right.X + " " + right.Y + " " + right.Z, new Vector2(500, 50), Color.White);
             XNAGame.Instance().SpriteBatch.DrawString(spriteFont, "Up: " + up.X + " " + up.Y + " " + up.Z, new Vector2(500, 70), Color.White);
+             */
         }
 
         public override void LoadContent()

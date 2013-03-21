@@ -22,6 +22,7 @@ namespace Steering
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Fighter camFighter;
+        KeyboardState oldState;
         
 
         public Fighter CamFighter
@@ -106,16 +107,14 @@ namespace Steering
             // TODO: Add your initialization logic here
             camera = new Camera();
 
-            SkySphere skySphere = new SkySphere();
-            //children.Add(skySphere);
-
             camera.pos = new Vector3(2, 20, 50);
             int midX = GraphicsDeviceManager.DefaultBackBufferHeight / 2;
             int midY = GraphicsDeviceManager.DefaultBackBufferWidth / 2;
             Mouse.SetPosition(midX, midY);
             children.Add(camera);
-            Scenario.setUpBuckRogersDemo();
+            Scenario.setUpArrive();
             space = new Space();
+            oldState = Keyboard.GetState();
             base.Initialize();
         }
 
@@ -152,7 +151,18 @@ namespace Steering
             {
                 child.UnloadContent();
             }
+        }
 
+        public void ClearWorld()
+        {
+            for (int i = children.Count - 1; i >= 0; i--)
+            {
+                if (children[i] != camera)
+                {
+                    children.Remove(children[i]);
+                }
+            }
+            camera.pos = new Vector3(2, 20, 50);
         }
 
         /// <summary>
@@ -163,21 +173,62 @@ namespace Steering
         protected override void Update(GameTime gameTime)
         {
             
-            KeyboardState keyboardState = Keyboard.GetState();
-            if (keyboardState.IsKeyDown(Keys.F1) && !wasKeyDown)
+            KeyboardState newState = Keyboard.GetState();
+            if (newState.IsKeyDown(Keys.F1))
             {
-                useCamFighter = !useCamFighter;
-                wasKeyDown = true;
-            }
-            if (!keyboardState.IsKeyDown(Keys.F1))
-            {
-                if (wasKeyDown)
+                if (!oldState.IsKeyDown(Keys.F1))
                 {
-                    camera.up = Vector3.Up;
-                    camera.right = Vector3.Cross(Camera.look, Camera.up);
+                    useCamFighter = !useCamFighter;
                 }
-                wasKeyDown = false;
-
+            }
+            if (newState.IsKeyDown(Keys.F2))
+            {
+                if (!oldState.IsKeyDown(Keys.F2))
+                {
+                    ClearWorld();
+                    Scenario.setUpArrive();
+                }
+            }
+            if (newState.IsKeyDown(Keys.F3))
+            {
+                if (!oldState.IsKeyDown(Keys.F3))
+                {
+                    ClearWorld();
+                    Scenario.setUpPursuit();
+                }
+            }
+            if (newState.IsKeyDown(Keys.F4))
+            {
+                if (!oldState.IsKeyDown(Keys.F4))
+                {
+                    ClearWorld();
+                    Scenario.setUpWander();
+                }
+            }
+            
+            if (newState.IsKeyDown(Keys.F5))
+            {
+                if (!oldState.IsKeyDown(Keys.F5))
+                {
+                    ClearWorld();
+                    Scenario.setUpStateMachineDemo();
+                }
+            }
+            if (newState.IsKeyDown(Keys.F6))
+            {
+                if (!oldState.IsKeyDown(Keys.F6))
+                {
+                    ClearWorld();
+                    Scenario.setUpBuckRogersDemo();
+                }
+            } 
+            if (newState.IsKeyDown(Keys.F7))
+            {
+                if (!oldState.IsKeyDown(Keys.F7))
+                {
+                    ClearWorld();
+                    Scenario.setUpFlockingDemo();
+                }
             }
             
             if (useCamFighter)
@@ -186,6 +237,11 @@ namespace Steering
                 camera.look = camFighter.look;
                 camera.up = camFighter.up;
                 camera.right = camFighter.right;
+            }
+            else
+            {
+                camera.up = Vector3.Up;
+                camera.right = Vector3.Cross(Camera.look, Camera.up);
             }
             //space.Partition();
             for (int i = children.Count - 1; i >= 0; i--)
@@ -196,24 +252,12 @@ namespace Steering
                 }
                 else
                 {
-                    updateQueue.Enqueue(children[i]);
+                    children[i].Update(gameTime);
                 }
             }
 
-            UpdateThread(gameTime, 0, children.Count);
+            oldState = newState;
             base.Update(gameTime);
-        }
-
-        private void UpdateThread(GameTime gameTime, int start, int end)
-        {
-            for (int i = 0 ; i < end ; i ++)
-            {
-                Entity entity = children[i];
-                if (entity != null)
-                {
-                    entity.Update(gameTime);
-                }
-            }
         }
 
         /// <summary>

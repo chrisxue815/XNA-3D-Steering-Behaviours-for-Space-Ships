@@ -92,10 +92,16 @@ namespace Steering
             XNAGame.Instance().CamFighter = camFighter;
             Camera camera = XNAGame.Instance().Camera;
             camera.pos = new Vector3(0.0f, 60.0f, 200.0f);
+
+            foreach (Entity child in children)
+            {
+                child.LoadContent();
+            }
         }
 
         public static void setUpStateMachineDemo()
         {
+            Params.Load("avoidance.properties");
             List<Entity> children = XNAGame.Instance().Children;            
             Ground ground = new Ground();
             children.Add(ground);
@@ -137,12 +143,15 @@ namespace Steering
             o = new Obstacle(4);
             o.pos = new Vector3(50, 0, -90) + aiFighter.pos;
             children.Add(o);
-
-
+            foreach (Entity child in children)
+            {
+                child.LoadContent();
+            }
         }
 
         public static void setUpPursuit()
         {
+            Params.Load("avoidance.properties");
             List<Entity> children = XNAGame.Instance().Children;
 
             Ground ground = new Ground();
@@ -164,11 +173,16 @@ namespace Steering
             fighter1.Target = fighter;
             fighter1.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.pursuit);
             fighter1.pos = new Vector3(-20, 20, -20);
-            children.Add(fighter1);                        
+            children.Add(fighter1);
+            foreach (Entity child in children)
+            {
+                child.LoadContent();
+            }  
         }
 
         public static void setUpWander()
         {
+            Params.Load("avoidance.properties");
             List<Entity> children = XNAGame.Instance().Children;
             Fighter leader = new Fighter();
             leader.pos = new Vector3(10, 120, 20);
@@ -191,29 +205,46 @@ namespace Steering
             children.Add(ground);
             XNAGame.Instance().Ground = ground;
 
-            XNAGame.Instance().Camera.pos = new Vector3(10, 120, 50);            
+            XNAGame.Instance().Camera.pos = new Vector3(10, 120, 50);
+            foreach (Entity child in children)
+            {
+                child.LoadContent();
+            }
       
         }
 
-
         public static void setUpArrive()
         {
+            Params.Load("avoidance.properties");
             List<Entity> children = XNAGame.Instance().Children;
             Fighter leader = new Fighter();
-            leader.pos = new Vector3(10, 20, 20);
+            leader.pos = new Vector3(10, 120, 20);
             leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.arrive);
             leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
             leader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
-            leader.targetPos = new Vector3(0, 100, -450);
+            leader.targetPos = new Vector3(0, 200, -450);
             children.Add(leader);
             XNAGame.Instance().Leader = leader;
+
+            Fighter camFighter = new Fighter();
+            camFighter.Leader = leader;
+            camFighter.pos = new Vector3(10, 120, 0);
+            camFighter.offset = new Vector3(0, 5, 10);
+            camFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
+            camFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.wall_avoidance);
+            camFighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
+            XNAGame.Instance().CamFighter = camFighter;
+            children.Add(camFighter);
+
             Ground ground = new Ground();
             children.Add(ground);
+
             XNAGame.Instance().Ground = ground;
             foreach (Entity child in children)
             {
-                child.pos.Y += 100;
+                child.LoadContent();
             }
+
         }
         
 
@@ -301,6 +332,7 @@ namespace Steering
             foreach (Entity child in children)
             {
                 child.pos.Y += 100;
+                child.LoadContent();
             }
         }
     }
