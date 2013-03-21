@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Threading;
 
 
 namespace Steering
@@ -57,6 +58,8 @@ namespace Steering
         private Camera camera;
         List<Entity> children = new List<Entity>();
 
+        private Queue<Entity> updateQueue = new Queue<Entity>();
+
         public List<Entity> Children
         {
             get { return children; }
@@ -73,6 +76,14 @@ namespace Steering
         public static XNAGame Instance()
         {
             return instance;
+        }
+
+        Space space;
+
+        public Space Space
+        {
+            get { return space; }
+            set { space = value; }
         }
 
         public XNAGame()
@@ -96,7 +107,7 @@ namespace Steering
             camera = new Camera();
 
             SkySphere skySphere = new SkySphere();
-            children.Add(skySphere);
+            //children.Add(skySphere);
 
             camera.pos = new Vector3(2, 20, 50);
             int midX = GraphicsDeviceManager.DefaultBackBufferHeight / 2;
@@ -104,9 +115,7 @@ namespace Steering
             Mouse.SetPosition(midX, midY);
             children.Add(camera);
             Scenario.setUpBuckRogersDemo();
-           
-
-            
+            space = new Space();
             base.Initialize();
         }
 
@@ -178,17 +187,33 @@ namespace Steering
                 camera.up = camFighter.up;
                 camera.right = camFighter.right;
             }
-
-            for (int i = 0; i < children.Count; i++)
+            //space.Partition();
+            for (int i = children.Count - 1; i >= 0; i--)
             {
-                children[i].Update(gameTime);
                 if (children[i].Alive == false)
                 {
                     children.Remove(children[i]);
                 }
-            }            
+                else
+                {
+                    updateQueue.Enqueue(children[i]);
+                }
+            }
 
+            UpdateThread(gameTime, 0, children.Count);
             base.Update(gameTime);
+        }
+
+        private void UpdateThread(GameTime gameTime, int start, int end)
+        {
+            for (int i = 0 ; i < end ; i ++)
+            {
+                Entity entity = children[i];
+                if (entity != null)
+                {
+                    entity.Update(gameTime);
+                }
+            }
         }
 
         /// <summary>
@@ -198,7 +223,7 @@ namespace Steering
         protected override void Draw(GameTime gameTime)
         {
             
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Aqua);
             spriteBatch.Begin();
 
             // Allows the game to exit

@@ -50,7 +50,7 @@ namespace Steering
         }
 
         SteeringBehaviours steeringBehaviours;
-        public float maxSpeed = 20.0f;
+        public float maxSpeed = Params.GetFloat("max_speed");
         bool drawAxis;
         List<Vector3> feelers = new List<Vector3>();
 
@@ -99,7 +99,7 @@ namespace Steering
             modelName = "fighter";
         }
 
-        public override void LoadContent()
+        public override void LoadContent() 
         {            
             model = XNAGame.Instance().Content.Load<Model>(modelName);
             worldTransform = Matrix.CreateWorld(pos, look, up);
@@ -122,7 +122,7 @@ namespace Steering
             float smoothRate;
             steeringBehaviours.timeDelta = timeDelta;
             force = steeringBehaviours.calculate();
-
+            SteeringBehaviours.checkNaN(force);
             Vector3 newAcceleration = force / Mass;
 
             if (timeDelta > 0)
@@ -139,8 +139,7 @@ namespace Steering
                 velocity.Normalize();
                 velocity *= maxSpeed;
             }
-            pos += velocity * timeDelta;
-            SteeringBehaviours.checkNaN(force);
+            pos += velocity * timeDelta;            
 
             // the length of this global-upward-pointing vector controls the vehicle's
             // tendency to right itself as it is rolled over from turning acceleration
@@ -176,6 +175,8 @@ namespace Steering
                     up.Normalize();
                     SteeringBehaviours.checkNaN(ref up, Vector3.Up);
                 }
+                // Apply damping
+                velocity *= 0.99f;
             }
             
             if (look != basis)

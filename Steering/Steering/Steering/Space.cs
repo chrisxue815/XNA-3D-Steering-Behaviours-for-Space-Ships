@@ -20,11 +20,13 @@ namespace Steering
         {
             // generate the list of cells
             float cellWidth = Params.GetFloat("cell_width");
-            float range = Params.GetFloat("world_range");
+            float range = Params.GetFloat("world_range") + Params.GetFloat("cell_width");
             float worldWidth = range * 2;
 
             int num = 0;
-            for (float y = -range; y < range; y+= cellWidth)
+
+            //for (float y = -range; y < range; y+= cellWidth)
+            float y = 0;
             {
                 for (float z = -range; z < range; z += cellWidth)
                 {
@@ -57,6 +59,7 @@ namespace Steering
 
         public int FindCell(Vector3 pos)
         {
+            pos.Y = 0;
             foreach (Cell cell in cells)
             {
                 if (cell.Contains(pos))
@@ -64,19 +67,25 @@ namespace Steering
                     return cell.Number;
                 }
             }
-            Console.WriteLine();
-            // Should not get here
             return -1;
         }
 
         public void Partition()
         {
             List<Entity> entities = XNAGame.Instance().Children;
+            foreach (Cell cell in cells)
+            {
+                cell.Entities.Clear();
+            }
             foreach (Entity entity in entities)
             {
                 if (entity is Fighter)
                 {
-                    entity.Cell = FindCell(entity.pos);
+                    int cell = FindCell(entity.pos);
+                    if (cell != -1)
+                    {
+                        cells[cell].Entities.Add(entity);
+                    }
                 }
             }
         }

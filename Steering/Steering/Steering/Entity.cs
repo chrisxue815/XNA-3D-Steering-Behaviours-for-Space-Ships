@@ -15,8 +15,39 @@ namespace Steering
 {
     public abstract class Entity
     {
-        private bool alive = true;
+        private bool needsUpdate;
 
+        public bool NeedsUpdate
+        {
+            get { return needsUpdate; }
+            set { needsUpdate = value; }
+        }
+        private int cell;
+
+        public int Cell
+        {
+            get { return cell; }
+            set { cell = value; }
+        }
+
+
+        private bool tagged = false;
+
+        public bool Tagged
+        {
+            get { return tagged; }
+            set { tagged = value; }
+        }
+
+        private bool shouldDraw = true;
+
+        public bool ShouldDraw
+        {
+            get { return shouldDraw; }
+            set { shouldDraw = value; }
+        }
+
+        private bool alive = true;
         public bool Alive
         {
             get { return alive; }
