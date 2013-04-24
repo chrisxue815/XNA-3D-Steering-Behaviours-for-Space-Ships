@@ -103,7 +103,8 @@ namespace Steering
         
         protected override void Initialize()
         {
-            
+       
+                        
             // TODO: Add your initialization logic here
             camera = new Camera();
 
@@ -125,6 +126,14 @@ namespace Steering
         protected override void LoadContent()
 
         {
+
+            Vector2 a = new Vector2(10, 10);
+            Vector2 b = new Vector2(20, 20);
+
+            a = b;
+            b.X = 30;
+            b.Y = 30;
+            
 
             mysong = Content.Load<Song>("138");
             brTexture = Content.Load<Texture2D>("BuckRogersDVD-box");
@@ -228,6 +237,15 @@ namespace Steering
                 {
                     ClearWorld();
                     Scenario.setUpFlockingDemo();
+                }
+            }
+
+            if (newState.IsKeyDown(Keys.F8))
+            {
+                if (!oldState.IsKeyDown(Keys.F8))
+                {
+                    ClearWorld();
+                    Scenario.setUpPathFindingDemo();
                 }
             }
             

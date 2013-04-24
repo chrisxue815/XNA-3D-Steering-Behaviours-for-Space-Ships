@@ -213,6 +213,47 @@ namespace Steering
       
         }
 
+        public static void setUpPathFindingDemo()
+        {
+            List<Entity> children = XNAGame.Instance().Children;
+
+            Fighter fighter = new Fighter();
+            fighter.ModelName = "fighter";
+            fighter.pos = new Vector3(10, 0, 20);
+            children.Add(fighter);
+            Obstacle obstacle = new Obstacle(10);
+            obstacle.pos = new Vector3(15, 0, -10);
+            children.Add(obstacle);
+
+            obstacle = new Obstacle(12);
+            obstacle.pos = new Vector3(5, 0, -50);
+            children.Add(obstacle);
+
+            obstacle = new Obstacle(5);
+            obstacle.pos = new Vector3(10, 0, -70);
+            children.Add(obstacle);
+            
+            Ground ground = new Ground();
+            children.Add(ground);
+            XNAGame.Instance().Ground = ground;
+            PathFinder pathFinder = new PathFinder();
+            Path path = pathFinder.findPath(fighter.pos, new Vector3(20, 0, -150));
+            fighter.targetPos = new Vector3(20, 0, -150);
+            path.DrawPath = true;
+            //dalek.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.follow_path);
+            path.Looped = false;
+            fighter.Path = path;
+            XNAGame.Instance().Leader = fighter;
+
+            XNAGame.Instance().Ground = ground;
+            foreach (Entity child in children)
+            {
+                child.LoadContent();
+            }
+
+        }
+
+
         public static void setUpArrive()
         {
             Params.Load("avoidance.properties");
