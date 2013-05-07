@@ -24,7 +24,7 @@ namespace Steering
         {
             if (Video == null)
             {
-                Video = Game.Content.Load<Video>("star.trek");
+                Video = Game.Content.Load<Video>("StarTrek/movie");
                 VideoPlayer = new VideoPlayer();
                 VideoPlayer.Play(Video);
             }

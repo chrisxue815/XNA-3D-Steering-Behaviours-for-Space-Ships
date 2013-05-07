@@ -313,8 +313,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="star.trek.wmv">
-      <Name>star.trek</Name>
+    <Compile Include="StarTrek\movie.wmv">
+      <Name>movie</Name>
       <Importer>WmvImporter</Importer>
       <Processor>VideoProcessor</Processor>
     </Compile>

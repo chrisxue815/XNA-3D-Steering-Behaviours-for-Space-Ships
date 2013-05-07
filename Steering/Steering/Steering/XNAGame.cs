@@ -105,22 +105,23 @@ namespace Steering
         
         protected override void Initialize()
         {
-       
-                        
             // TODO: Add your initialization logic here
             camera = new Camera();
-
             camera.pos = new Vector3(2, 20, 50);
-            int midX = GraphicsDeviceManager.DefaultBackBufferHeight / 2;
-            int midY = GraphicsDeviceManager.DefaultBackBufferWidth / 2;
-            Mouse.SetPosition(midX, midY);
             children.Add(camera);
-            Scenario.setUpArrive();
-            space = new Space();
-            oldState = Keyboard.GetState();
 
             MoviePlayer = new MoviePlayer();
             children.Add(MoviePlayer);
+
+            int midX = GraphicsDeviceManager.DefaultBackBufferHeight / 2;
+            int midY = GraphicsDeviceManager.DefaultBackBufferWidth / 2;
+
+            Mouse.SetPosition(midX, midY);
+
+            Scenario.SetUpStarTrekDemo();
+
+            space = new Space();
+            oldState = Keyboard.GetState();
 
             base.Initialize();
         }

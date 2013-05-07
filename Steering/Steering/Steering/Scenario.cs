@@ -376,5 +376,10 @@ namespace Steering
                 child.LoadContent();
             }
         }
+
+        public static void SetUpStarTrekDemo()
+        {
+            Params.Load("avoidance.properties");
+        }
     }
 }
