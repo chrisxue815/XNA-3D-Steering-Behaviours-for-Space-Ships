@@ -87,12 +87,14 @@ namespace Steering
             set { space = value; }
         }
 
+        private MoviePlayer MoviePlayer { get; set; }
+
         public XNAGame()
         {
             instance = this;
             graphics = new GraphicsDeviceManager(this);
 
-            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferWidth = 1366;
             graphics.PreferredBackBufferHeight = 768;
             graphics.PreferMultiSampling = true;
             graphics.SynchronizeWithVerticalRetrace = true;
@@ -116,6 +118,10 @@ namespace Steering
             Scenario.setUpArrive();
             space = new Space();
             oldState = Keyboard.GetState();
+
+            MoviePlayer = new MoviePlayer();
+            children.Add(MoviePlayer);
+
             base.Initialize();
         }
 
@@ -164,14 +170,10 @@ namespace Steering
 
         public void ClearWorld()
         {
-            for (int i = children.Count - 1; i >= 0; i--)
-            {
-                if (children[i] != camera)
-                {
-                    children.Remove(children[i]);
-                }
-            }
+            children.Clear();
             camera.pos = new Vector3(2, 20, 50);
+            children.Add(camera);
+            children.Add(MoviePlayer);
         }
 
         /// <summary>

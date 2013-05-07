@@ -134,6 +134,7 @@
     <Compile Include="State.cs" />
     <Compile Include="SteeringBehavoiurs.cs" />
     <Compile Include="Utilities.cs" />
+    <Compile Include="MoviePlayer.cs" />
     <Compile Include="XNAGame.cs" />
   </ItemGroup>
   <ItemGroup>
