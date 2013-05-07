@@ -114,6 +114,7 @@
     <Compile Include="EliteFighter.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Fighter.cs" />
+    <Compile Include="StarTrek\FlowController.cs" />
     <Compile Include="Ground.cs" />
     <Compile Include="IdleState.cs" />
     <Compile Include="Lazer.cs" />
@@ -134,7 +135,7 @@
     <Compile Include="State.cs" />
     <Compile Include="SteeringBehavoiurs.cs" />
     <Compile Include="Utilities.cs" />
-    <Compile Include="MoviePlayer.cs" />
+    <Compile Include="StarTrek\MoviePlayer.cs" />
     <Compile Include="XNAGame.cs" />
   </ItemGroup>
   <ItemGroup>
