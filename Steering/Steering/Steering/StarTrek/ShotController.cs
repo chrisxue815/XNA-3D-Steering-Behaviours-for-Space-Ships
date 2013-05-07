@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace Steering
 {
-    public class FlowController : Entity
+    public class ShotController : Entity
     {
         private XNAGame Game { get; set; }
 
@@ -14,25 +14,48 @@ namespace Steering
         private Fighter ChaserLeader { get; set; }
         private List<Fighter> ChaserFleet { get; set; }
 
-        private static readonly double[] SceneStartTime = {3.91, 8.54, 13.91};
-        private List<Action<double>> ActionList { get; set; }
-        private int CurrentScene { get; set; }
+        private List<Shot> ShotList { get; set; }
+        private int CurrentShot { get; set; }
 
-
-        public FlowController()
+        public ShotController()
         {
             Game = XNAGame.Instance();
 
-            InitSpaceships();
-            InitActionList();
+            InitShotList();
         }
 
-        private void InitObstacles()
+        private void InitShotList()
         {
-            
+            ShotList = new List<Shot>();
+            CurrentShot = 0;
+            Shot shot = null;
+
+            shot = new Shot();
+            shot.StartTime = 3.91;
+            shot.InitialAction = InitSpaceships;
+            shot.Action = totalSeconds =>
+            {
+            };
+            ShotList.Add(shot);
+
+            shot = new Shot();
+            shot.StartTime = 8.54;
+            shot.Action = totalSeconds =>
+            {
+            };
+            ShotList.Add(shot);
+
+            shot = new Shot();
+            shot.StartTime = 13.91;
+            shot.Action = totalSeconds =>
+            {
+            };
+            ShotList.Add(shot);
+
+            ShotList.Sort();
         }
 
-        private void InitSpaceships()
+        private void InitSpaceships(double totalSeconds)
         {
             // chased
             Chased = new Fighter();
@@ -81,27 +104,32 @@ namespace Steering
             }
         }
 
-        private void InitActionList()
-        {
-            CurrentScene = 0;
-
-            ActionList = new List<Action<double>>(SceneStartTime.Length);
-
-            ActionList.Add(totalSeconds =>
-            {
-            });
-        }
-
         public override void LoadContent()
         {
+            Chased.LoadContent();
+            ChaserLeader.LoadContent();
+            foreach (var fighter in ChaserFleet)
+            {
+                fighter.LoadContent();
+            }
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (CurrentScene >= SceneStartTime.Length) return;
+            if (CurrentShot >= ShotList.Count) return;
 
             var totalSeconds = gameTime.TotalGameTime.TotalSeconds;
-            ActionList[CurrentScene](totalSeconds);
+            var elapsedSeconds = gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (totalSeconds > ShotList[CurrentShot].StartTime)
+            {
+                ++CurrentShot;
+                if (CurrentShot >= ShotList.Count) return;
+
+                ShotList[CurrentShot].InitialAction(totalSeconds);
+            }
+
+            ShotList[CurrentShot].Action(elapsedSeconds);
         }
 
         public override void Draw(GameTime gameTime)

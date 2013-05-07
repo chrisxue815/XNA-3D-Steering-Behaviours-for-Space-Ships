@@ -114,7 +114,8 @@
     <Compile Include="EliteFighter.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Fighter.cs" />
-    <Compile Include="StarTrek\FlowController.cs" />
+    <Compile Include="StarTrek\Shot.cs" />
+    <Compile Include="StarTrek\ShotController.cs" />
     <Compile Include="Ground.cs" />
     <Compile Include="IdleState.cs" />
     <Compile Include="Lazer.cs" />

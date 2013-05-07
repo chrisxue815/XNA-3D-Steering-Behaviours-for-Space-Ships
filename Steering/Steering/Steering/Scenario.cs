@@ -380,7 +380,7 @@ namespace Steering
         public static void SetUpStarTrekDemo()
         {
             Params.Load("avoidance.properties");
-            XNAGame.Instance().Children.Add(new FlowController());
+            XNAGame.Instance().Children.Add(new ShotController());
         }
     }
 }
