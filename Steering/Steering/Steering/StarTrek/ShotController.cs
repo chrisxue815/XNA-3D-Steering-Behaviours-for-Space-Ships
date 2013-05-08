@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Particle3DSample;
 
 namespace Steering
 {
@@ -10,6 +11,8 @@ namespace Steering
     {
         private XNAGame Game { get; set; }
         private Camera Camera { get { return Game.Camera; } }
+        private GameTime GameTime { get; set; }
+        private float ElapsedSeconds { get { return (float)GameTime.ElapsedGameTime.TotalSeconds; } }
 
         private Fighter Chased { get; set; }
         private Fighter ChaserLeader { get; set; }
@@ -23,6 +26,12 @@ namespace Steering
 
         private SkySphere SkyBox { get; set; }
 
+        private List<Projectile> Projectiles { get; set; }
+        private ParticleSystem ExplosionParticles { get; set; }
+        private ParticleSystem ExplosionSmokeParticles { get; set; }
+        private ParticleSystem ProjectileTrailParticles { get; set; }
+        private double TimeToNextProjectile { get; set; }
+
         public ShotController()
         {
             Game = XNAGame.Instance();
@@ -35,6 +44,21 @@ namespace Steering
 
             SkyBox = new SkySphere();
             Game.Children.Add(SkyBox);
+
+            Projectiles = new List<Projectile>();
+            ExplosionParticles = new ExplosionParticleSystem(Game, Game.Content);
+            ExplosionSmokeParticles = new ExplosionSmokeParticleSystem(Game, Game.Content);
+            ProjectileTrailParticles = new ProjectileTrailParticleSystem(Game, Game.Content);
+
+            // Set the draw order so the explosions and fire
+            // will appear over the top of the smoke.
+            ExplosionSmokeParticles.DrawOrder = 200;
+            ProjectileTrailParticles.DrawOrder = 300;
+            ExplosionParticles.DrawOrder = 400;
+
+            Game.Components.Add(ExplosionParticles);
+            Game.Components.Add(ExplosionSmokeParticles);
+            Game.Components.Add(ProjectileTrailParticles);
         }
 
         private void InitScenario()
@@ -89,7 +113,7 @@ namespace Steering
                     offset = offset,
                     pos = ChaserLeader.pos + offset,
                     look = Vector3.Left,
-                    up = Vector3.Up
+                    up = Vector3.Up,
                 };
                 fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
                 fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.obstacle_avoidance);
@@ -115,7 +139,7 @@ namespace Steering
             ShotList.Add(new Shot
             {
                 EndTime = 3.91,
-                Action = elapsedSeconds =>
+                Action = () =>
                 {
                     Camera.look = ChaserLeader.pos + new Vector3(10, 0, 0) - Camera.pos;
                     Camera.up = Vector3.Up;
@@ -124,15 +148,27 @@ namespace Steering
 
             ShotList.Add(new Shot
             {
-                EndTime = 8.54,
+                EndTime = 5.9,
                 InitialAction = () =>
                 {
                     Camera.pos = Chased.pos + new Vector3(0, 2, 10);
                     Camera.look = Chased.pos + new Vector3(-800, 0, -100) - Camera.pos;
                     Camera.up = Vector3.Up;
                 },
-                Action = elapsedSeconds =>
+                Action = () =>
                 {
+                }
+            });
+
+            ShotList.Add(new Shot
+            {
+                EndTime = 8.54,
+                InitialAction = () =>
+                {
+                },
+                Action = () =>
+                {
+                    Camera.pos += ElapsedSeconds * new Vector3(-50, 0, 0);
                 }
             });
 
@@ -161,9 +197,9 @@ namespace Steering
                     var cameraRight = Vector3.Cross(look, Vector3.Up);
                     Camera.up = Vector3.Cross(cameraRight, look);
 
-                    ChaserLeader.SteeringBehaviours.turnOff(SteeringBehaviours.behaviour_type.pursuit);
+                    SetChaserPursuit(false);
                 },
-                Action = elapsedSeconds =>
+                Action = () =>
                 {
                     Camera.look = Chased.pos - Camera.pos;
                     var cameraRight = Vector3.Cross(look, Vector3.Up);
@@ -176,14 +212,15 @@ namespace Steering
                 EndTime = 20.98,
                 InitialAction = () =>
                 {
-                    Camera.pos = ChaserLeader.pos + new Vector3(-200, 8, 5);
+                    Camera.pos = ChaserLeader.pos + new Vector3(-100, 8, 5);
                     Camera.look = ChaserLeader.pos - Camera.pos;
                     Camera.up = Vector3.Up;
 
-                    ChaserLeader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.pursuit);
+                    SetChaserPursuit(true);
                 },
-                Action = elapsedSeconds =>
+                Action = () =>
                 {
+                    Camera.pos += ElapsedSeconds * new Vector3(-20, 0, 0);
                     Camera.look = ChaserLeader.pos - Camera.pos;
                     var cameraRight = Vector3.Cross(look, Vector3.Up);
                     Camera.up = Vector3.Cross(cameraRight, look);
@@ -207,7 +244,7 @@ namespace Steering
                         Game.Children.Add(asteroid);
                     }
 
-                    ChaserLeader.SteeringBehaviours.turnOff(SteeringBehaviours.behaviour_type.pursuit);
+                    SetChaserPursuit(false);
 
                     Chased.targetPos = Chased.pos + new Vector3(-100, 0, -35);
                     Chased.look = Vector3.Normalize(new Vector3(-1, 0, 1.5f));
@@ -218,9 +255,9 @@ namespace Steering
                     var cameraRight = Vector3.Cross(look, Vector3.Up);
                     Camera.up = Vector3.Cross(cameraRight, look);
                 },
-                Action = elapsedSeconds =>
+                Action = () =>
                 {
-                    Camera.pos += elapsedSeconds * new Vector3(-50, 0, -1);
+                    Camera.pos += ElapsedSeconds * new Vector3(-50, 0, -1);
                     Camera.look = Chased.pos - Camera.pos;
                     var cameraRight = Vector3.Cross(look, Vector3.Up);
                     Camera.up = Vector3.Cross(cameraRight, look);
@@ -234,7 +271,7 @@ namespace Steering
                 {
                     Chased.targetPos = Chased.pos + new Vector3(75, 10, -10);
                 },
-                Action = elapsedSeconds =>
+                Action = () =>
                 {
                     Camera.look = Chased.pos - Camera.pos;
                     var cameraRight = Vector3.Cross(look, Vector3.Up);
@@ -266,7 +303,7 @@ namespace Steering
                         Game.Children.Add(asteroid);
                     }
                 },
-                Action = elapsedSeconds =>
+                Action = () =>
                 {
                     Camera.pos = Chased.pos + new Vector3(20, 5, 0);
                     Camera.look = Chased.pos - Camera.pos;
@@ -283,15 +320,88 @@ namespace Steering
                     Chased.velocity.Normalize();
                     Chased.velocity *= 0.1f;
                 },
-                Action = elapsedSeconds =>
+                Action = () =>
                 {
-                    Chased.velocity += elapsedSeconds * new Vector3(0.5f, 0, 1f);
+                    Chased.velocity += ElapsedSeconds * new Vector3(0.5f, 0, 0.5f);
                     Chased.velocity.Normalize();
                     Chased.velocity *= 0.1f;
                 }
             });
 
+            ShotList.Add(new Shot
+            {
+                EndTime = 42,
+                InitialAction = () =>
+                {
+                },
+                Action = () =>
+                {
+
+                }
+            });
+
             ShotList.Sort();
+        }
+
+        /// <summary>
+        /// Helper for updating the explosions effect.
+        /// </summary>
+        void UpdateExplosions(GameTime gameTime)
+        {
+            TimeToNextProjectile -= gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (TimeToNextProjectile <= 0)
+            {
+                // Create a new projectile once per second. The real work of moving
+                // and creating particles is handled inside the Projectile class.
+                Projectiles.Add(new Projectile(ExplosionParticles,
+                                               ExplosionSmokeParticles,
+                                               ProjectileTrailParticles));
+
+                TimeToNextProjectile += 1;
+            }
+        }
+
+        /// <summary>
+        /// Helper for updating the list of active projectiles.
+        /// </summary>
+        void UpdateProjectiles(GameTime gameTime)
+        {
+            int i = 0;
+
+            while (i < Projectiles.Count)
+            {
+                if (!Projectiles[i].Update(gameTime))
+                {
+                    // Remove projectiles at the end of their life.
+                    Projectiles.RemoveAt(i);
+                }
+                else
+                {
+                    // Advance to the next projectile.
+                    i++;
+                }
+            }
+        }
+
+        private void SetChaserPursuit(bool pursuit)
+        {
+            if (pursuit)
+            {
+                ChaserLeader.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.pursuit);
+                foreach (var fighter in ChaserFleet)
+                {
+                    fighter.SteeringBehaviours.turnOn(SteeringBehaviours.behaviour_type.offset_pursuit);
+                }
+            }
+            else
+            {
+                ChaserLeader.SteeringBehaviours.turnOff(SteeringBehaviours.behaviour_type.pursuit);
+                foreach (var fighter in ChaserFleet)
+                {
+                    fighter.SteeringBehaviours.turnOff(SteeringBehaviours.behaviour_type.offset_pursuit);
+                }
+            }
         }
 
         public override void LoadContent()
@@ -306,8 +416,9 @@ namespace Steering
 
             if (totalSeconds < PlayPosition) return;
 
-            var elapsedSeconds = gameTime.ElapsedGameTime.TotalSeconds;
-            PlayPosition += elapsedSeconds;
+            GameTime = gameTime;
+
+            PlayPosition += ElapsedSeconds;
 
             if (totalSeconds > ShotList[CurrentShot].EndTime)
             {
@@ -317,11 +428,17 @@ namespace Steering
                 ShotList[CurrentShot].InitialAction();
             }
 
-            ShotList[CurrentShot].Action((float)elapsedSeconds);
+            ShotList[CurrentShot].Action();
+            //UpdateExplosions(GameTime);
+            //UpdateProjectiles(GameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
+            // Pass camera matrices through to the particle system components.
+            ExplosionParticles.SetCamera(Camera.view, Camera.projection);
+            ExplosionSmokeParticles.SetCamera(Camera.view, Camera.projection);
+            ProjectileTrailParticles.SetCamera(Camera.view, Camera.projection);
         }
 
         public override void UnloadContent()

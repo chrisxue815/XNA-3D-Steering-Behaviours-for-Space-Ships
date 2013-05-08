@@ -9,7 +9,7 @@ namespace Steering
     {
         public double EndTime { get; set; }
         public Action InitialAction { get; set; }
-        public Action<float> Action { get; set; }
+        public Action Action { get; set; }
 
         public int CompareTo(Shot other)
         {

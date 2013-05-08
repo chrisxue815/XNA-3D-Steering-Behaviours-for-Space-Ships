@@ -115,6 +115,16 @@
     <Compile Include="Entity.cs" />
     <Compile Include="Fighter.cs" />
     <Compile Include="StarTrek\Asteroid.cs" />
+    <Compile Include="StarTrek\Particle3DSample\ParticleEmitter.cs" />
+    <Compile Include="StarTrek\Particle3DSample\ParticleSettings.cs" />
+    <Compile Include="StarTrek\Particle3DSample\ParticleSystem.cs" />
+    <Compile Include="StarTrek\Particle3DSample\ParticleSystems\ExplosionParticleSystem.cs" />
+    <Compile Include="StarTrek\Particle3DSample\ParticleSystems\ExplosionSmokeParticleSystem.cs" />
+    <Compile Include="StarTrek\Particle3DSample\ParticleSystems\FireParticleSystem.cs" />
+    <Compile Include="StarTrek\Particle3DSample\ParticleSystems\ProjectileTrailParticleSystem.cs" />
+    <Compile Include="StarTrek\Particle3DSample\ParticleSystems\SmokePlumeParticleSystem.cs" />
+    <Compile Include="StarTrek\Particle3DSample\ParticleVertex.cs" />
+    <Compile Include="StarTrek\Particle3DSample\Projectile.cs" />
     <Compile Include="StarTrek\Shot.cs" />
     <Compile Include="StarTrek\ShotController.cs" />
     <Compile Include="Ground.cs" />

@@ -404,19 +404,33 @@ namespace Steering
 
         Vector3 offsetPursuit(Vector3 offset)
         {
-            Vector3 target = Vector3.Zero;
+            var targetPos = fighter.Leader.Target.pos + offset;
 
-            //target = offset + fighter.Leader.pos;
-            target = Vector3.Transform(offset, fighter.Leader.worldTransform);
+            float dist = (targetPos - fighter.pos).Length();
 
-            float dist = (target - fighter.pos).Length();     
-      
+            if (dist < 1.0f)
+            {
+                //fighter.Target.pos = new Vector3(20, 20, 0);
+            }
             float lookAhead = (dist / fighter.maxSpeed);
 
-            target = target + (lookAhead * fighter.Leader.velocity);
+            Vector3 target = targetPos + (lookAhead * fighter.Leader.Target.velocity);
+            sphere.pos = target;
+            return seek(target);
 
-            checkNaN(target);
-            return arrive(target);
+            //Vector3 target = Vector3.Zero;
+
+            ////target = offset + fighter.Leader.pos;
+            //target = Vector3.Transform(offset, fighter.Leader.worldTransform);
+
+            //float dist = (target - fighter.pos).Length();     
+      
+            //float lookAhead = (dist / fighter.maxSpeed);
+
+            //target = target + (lookAhead * fighter.Leader.velocity);
+
+            //checkNaN(target);
+            //return arrive(target);
         }
 
         Vector3 pursue()
