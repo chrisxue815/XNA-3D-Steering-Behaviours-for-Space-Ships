@@ -15,7 +15,7 @@ namespace Steering
 {
     public class Sphere : Entity
     {
-        float radius;
+        public float radius;
         public Vector3 Color = new Vector3(1, 1, 1);
 
         public Sphere(float radius)

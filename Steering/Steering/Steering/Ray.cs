@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace Steering
 {
-    class Ray
+    public class Ray
     {
         public Vector3 pos;
         public Vector3 look;

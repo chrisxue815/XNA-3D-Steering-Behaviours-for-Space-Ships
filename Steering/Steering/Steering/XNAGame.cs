@@ -87,8 +87,6 @@ namespace Steering
             set { space = value; }
         }
 
-        private MoviePlayer MoviePlayer { get; set; }
-
         public XNAGame()
         {
             instance = this;
@@ -109,9 +107,6 @@ namespace Steering
             camera = new Camera();
             camera.pos = new Vector3(2, 20, 50);
             children.Add(camera);
-
-            MoviePlayer = new MoviePlayer();
-            children.Add(MoviePlayer);
 
             int midX = GraphicsDeviceManager.DefaultBackBufferHeight / 2;
             int midY = GraphicsDeviceManager.DefaultBackBufferWidth / 2;
@@ -174,7 +169,6 @@ namespace Steering
             children.Clear();
             camera.pos = new Vector3(2, 20, 50);
             children.Add(camera);
-            children.Add(MoviePlayer);
         }
 
         /// <summary>

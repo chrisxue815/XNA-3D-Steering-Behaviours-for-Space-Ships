@@ -114,6 +114,7 @@
     <Compile Include="EliteFighter.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Fighter.cs" />
+    <Compile Include="StarTrek\Asteroid.cs" />
     <Compile Include="StarTrek\Shot.cs" />
     <Compile Include="StarTrek\ShotController.cs" />
     <Compile Include="Ground.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="SkySphere.cs" />
     <Compile Include="Space.cs" />
     <Compile Include="Sphere.cs" />
+    <Compile Include="StarTrek\SkyBox.cs" />
     <Compile Include="State.cs" />
     <Compile Include="SteeringBehavoiurs.cs" />
     <Compile Include="Utilities.cs" />
@@ -180,6 +182,8 @@
   <ItemGroup>
     <None Include="avoidance.properties" />
     <None Include="flocking.properties" />
+    <None Include="StarTrek\asteroid1.x" />
+    <None Include="StarTrek\asteroid2.x" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
