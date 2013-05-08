@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace Steering
 {
-    class Sphere:Entity
+    public class Sphere : Entity
     {
         float radius;
         public Vector3 Color = new Vector3(1, 1, 1);

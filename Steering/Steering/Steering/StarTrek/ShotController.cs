@@ -9,6 +9,7 @@ namespace Steering
     public class ShotController : Entity
     {
         private XNAGame Game { get; set; }
+        private Camera Camera { get { return Game.Camera; } }
 
         private Fighter Chased { get; set; }
         private Fighter ChaserLeader { get; set; }
@@ -45,7 +46,7 @@ namespace Steering
             // chaser leader
             ChaserLeader = new Fighter();
             ChaserLeader.ModelName = chaserModelName;
-            ChaserLeader.pos = Chased.pos + new Vector3(200, 0, 0);
+            ChaserLeader.pos = Chased.pos + new Vector3(100, 0, 0);
             ChaserLeader.look = Vector3.Left;
             ChaserLeader.up = Vector3.Up;
             ChaserLeader.Target = Chased;
@@ -82,12 +83,11 @@ namespace Steering
                 Game.Children.Add(fighter);
             }
 
-            // camera
-            var camera = Game.Camera;
-            camera.ControlledByUser = false;
-            camera.pos = Chased.pos + new Vector3(-40, 2, 5);
-            camera.look = Chased.pos - camera.pos;
-            camera.up = Vector3.Up;
+            // Camera
+            Camera.ControlledByUser = false;
+            Camera.pos = Chased.pos + new Vector3(-40, 2, 5);
+            Camera.look = Chased.pos - Camera.pos;
+            Camera.up = Vector3.Up;
         }
 
         private void InitShotList()
@@ -103,25 +103,52 @@ namespace Steering
             };
             ShotList.Add(shot);
 
-            //shot = new Shot();
-            //shot.EndTime = 8.54;
-            //shot.Action = totalSeconds =>
-            //{
-            //};
-            //ShotList.Add(shot);
+            shot = new Shot();
+            shot.EndTime = 8.54;
+            shot.InitialAction = totalSeconds =>
+            {
+                Camera.pos = Chased.pos + new Vector3(0, 2, 10);
+                Camera.look = Chased.pos + new Vector3(-800, 0, 0) - Camera.pos;
+                Camera.up = Vector3.Up;
+            };
+            shot.Action = totalSeconds =>
+            {
+            };
+            ShotList.Add(shot);
 
-            //shot = new Shot();
-            //shot.EndTime = 13.91;
-            //shot.Action = totalSeconds =>
-            //{
-            //};
-            //ShotList.Add(shot);
+            shot = new Shot();
+            shot.EndTime = 13.91;
+            shot.InitialAction = totalSeconds =>
+            {
+                InitAsteroids();
+                Camera.pos = Chased.pos + new Vector3(-100, -20, 20);
+                Camera.look = Chased.pos - Camera.pos;
+                Camera.up = Vector3.Up;
+            };
+            shot.Action = totalSeconds =>
+            {
+            };
+            ShotList.Add(shot);
+
+            shot = new Shot();
+            shot.EndTime = 20.98;
+            shot.InitialAction = totalSeconds =>
+            {
+                Camera.pos = Chased.pos + new Vector3(-40, 2, 5);
+                Camera.look = ChaserLeader.pos - Camera.pos;
+                Camera.up = Vector3.Up;
+            };
+            shot.Action = totalSeconds =>
+            {
+            };
+            ShotList.Add(shot);
 
             ShotList.Sort();
         }
 
         private void InitAsteroids()
         {
+
         }
 
         public override void LoadContent()

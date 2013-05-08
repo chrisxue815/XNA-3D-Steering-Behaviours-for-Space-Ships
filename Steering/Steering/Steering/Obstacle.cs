@@ -18,7 +18,7 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace Steering
 {
-    class Obstacle:Sphere
+    public class Obstacle : Sphere
     {
         public Obstacle(float radius)
             : base(radius)
