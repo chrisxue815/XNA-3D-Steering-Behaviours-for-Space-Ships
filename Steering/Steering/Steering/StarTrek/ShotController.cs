@@ -21,7 +21,7 @@ namespace Steering
         private MoviePlayer MoviePlayer { get; set; }
         private double PlayPosition { get; set; }
 
-        private SkyBox SkyBox { get; set; }
+        private SkySphere SkyBox { get; set; }
 
         public ShotController()
         {
@@ -33,7 +33,7 @@ namespace Steering
             MoviePlayer = new MoviePlayer();
             Game.Children.Add(MoviePlayer);
 
-            SkyBox = new SkyBox();
+            SkyBox = new SkySphere();
             Game.Children.Add(SkyBox);
         }
 
@@ -141,7 +141,20 @@ namespace Steering
                 EndTime = 13.91,
                 InitialAction = () =>
                 {
-                    InitAsteroids();
+                    var asteroidList = new List<Asteroid>
+                    {
+                        new Asteroid(10) {pos = Chased.pos + new Vector3(-500, 20, 50)},
+                        new Asteroid(10) {pos = Chased.pos + new Vector3(-500, -10, -50)},
+                        new Asteroid(10) {pos = Chased.pos + new Vector3(-450, -50, -10)},
+                        new Asteroid(10) {pos = Chased.pos + new Vector3(-550, 30, -10)},
+                        new Asteroid(10) {pos = Chased.pos + new Vector3(-550, -10, 50)}
+                    };
+
+                    foreach (var asteroid in asteroidList)
+                    {
+                        asteroid.LoadContent();
+                        Game.Children.Add(asteroid);
+                    }
 
                     Camera.pos = Chased.pos + new Vector3(-100, -20, 20);
                     Camera.look = Chased.pos - Camera.pos;
@@ -184,14 +197,8 @@ namespace Steering
                 {
                     var asteroidList = new List<Asteroid>
                     {
-                        new Asteroid(30)
-                        {
-                            pos = Chased.pos + new Vector3(-60, 0, -5)
-                        },
-                        new Asteroid(30)
-                        {
-                            pos = Chased.pos + new Vector3(-60, 0, -70)
-                        }
+                        new Asteroid(30) {pos = Chased.pos + new Vector3(-60, 0, -5)},
+                        new Asteroid(30) {pos = Chased.pos + new Vector3(-60, 0, -70)}
                     };
 
                     foreach (var asteroid in asteroidList)
@@ -237,12 +244,27 @@ namespace Steering
 
             ShotList.Add(new Shot
             {
-                EndTime = 33,
+                EndTime = 33.5,
                 InitialAction = () =>
                 {
                     Chased.pos = Chased.pos + new Vector3(-200, 0, 0);
                     Chased.look = Vector3.Left;
-                    Chased.targetPos = Chased.pos + new Vector3(-200, 0, 0);
+                    Chased.targetPos = Chased.pos + new Vector3(-300, 0, 0);
+
+                    var asteroidList = new List<Asteroid>
+                    {
+                        new Asteroid(5) {pos = Chased.pos + new Vector3(-100, -20, 50)},
+                        new Asteroid(5) {pos = Chased.pos + new Vector3(-120, 0, -60)},
+                        new Asteroid(5) {pos = Chased.pos + new Vector3(-150, 20, 40)},
+                        new Asteroid(5) {pos = Chased.pos + new Vector3(-190, -20, -30)},
+                        new Asteroid(5) {pos = Chased.pos + new Vector3(-230, 30, -20)}
+                    };
+
+                    foreach (var asteroid in asteroidList)
+                    {
+                        asteroid.LoadContent();
+                        Game.Children.Add(asteroid);
+                    }
                 },
                 Action = elapsedSeconds =>
                 {
@@ -252,42 +274,24 @@ namespace Steering
                 }
             });
 
-            ShotList.Sort();
-        }
-
-        private void InitAsteroids()
-        {
-            var entryPos = Chased.pos;
-
-            var asteroidList = new List<Asteroid>
+            ShotList.Add(new Shot
             {
-                new Asteroid(10)
+                EndTime = 36,
+                InitialAction = () =>
                 {
-                    pos = entryPos + new Vector3(-500, 20, 50)
+                    Chased.SteeringBehaviours.turnOff(SteeringBehaviours.behaviour_type.arrive);
+                    Chased.velocity.Normalize();
+                    Chased.velocity *= 0.1f;
                 },
-                new Asteroid(10)
+                Action = elapsedSeconds =>
                 {
-                    pos = entryPos + new Vector3(-500, -10, -50)
-                },
-                new Asteroid(10)
-                {
-                    pos = entryPos + new Vector3(-450, -50, -10)
-                },
-                new Asteroid(10)
-                {
-                    pos = entryPos + new Vector3(-550, 30, -10)
-                },
-                new Asteroid(10)
-                {
-                    pos = entryPos + new Vector3(-550, -10, 50)
+                    Chased.velocity += elapsedSeconds * new Vector3(0.5f, 0, 1f);
+                    Chased.velocity.Normalize();
+                    Chased.velocity *= 0.1f;
                 }
-            };
+            });
 
-            foreach (var asteroid in asteroidList)
-            {
-                asteroid.LoadContent();
-                Game.Children.Add(asteroid);
-            }
+            ShotList.Sort();
         }
 
         public override void LoadContent()

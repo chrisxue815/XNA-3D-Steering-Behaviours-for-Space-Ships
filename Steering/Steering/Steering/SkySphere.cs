@@ -55,7 +55,7 @@ namespace Steering
             SkySphereEffect.Parameters["ProjectionMatrix"].SetValue(XNAGame.Instance().Camera.projection);
 
             DepthStencilState dss = new DepthStencilState();
-            dss.DepthBufferEnable = false;
+            dss.DepthBufferEnable = true;
             XNAGame.Instance().GraphicsDevice.DepthStencilState = dss;
             foreach (ModelMesh mesh in SkySphereModel.Meshes)
             {
