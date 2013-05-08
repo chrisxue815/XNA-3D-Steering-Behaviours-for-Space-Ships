@@ -14,6 +14,7 @@ namespace Steering
         private Video Video { get; set; }
         private VideoPlayer VideoPlayer { get; set; }
         private Texture2D Texture { get; set; }
+        public TimeSpan PlayPosition { get { return VideoPlayer.PlayPosition; } }
 
         public MoviePlayer()
         {

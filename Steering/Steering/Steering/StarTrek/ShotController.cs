@@ -19,6 +19,7 @@ namespace Steering
         private int CurrentShot { get; set; }
 
         private MoviePlayer MoviePlayer { get; set; }
+        private double PlayPosition { get; set; }
 
         private SkyBox SkyBox { get; set; }        
 
@@ -101,8 +102,8 @@ namespace Steering
 
             // Camera
             Camera.ControlledByUser = false;
-            Camera.pos = Chased.pos + new Vector3(-40, 2, 5);
-            Camera.look = Chased.pos - Camera.pos;
+            Camera.pos = Chased.pos + new Vector3(-70, 2, 5);
+            Camera.look = ChaserLeader.pos - Camera.pos;
             Camera.up = Vector3.Up;
         }
 
@@ -114,21 +115,23 @@ namespace Steering
             ShotList.Add(new Shot
             {
                 EndTime = 3.91,
-                Action = totalSeconds =>
+                Action = () =>
                 {
+                    Camera.look = ChaserLeader.pos - Camera.pos;
+                    Camera.up = Vector3.Up;
                 }
             });
 
             ShotList.Add(new Shot
             {
                 EndTime = 8.54,
-                InitialAction = totalSeconds =>
+                InitialAction = () =>
                 {
                     Camera.pos = Chased.pos + new Vector3(0, 2, 10);
                     Camera.look = Chased.pos + new Vector3(-800, 0, 0) - Camera.pos;
                     Camera.up = Vector3.Up;
                 },
-                Action = totalSeconds =>
+                Action = () =>
                 {
                 }
             });
@@ -136,29 +139,36 @@ namespace Steering
             ShotList.Add(new Shot
             {
                 EndTime = 13.91,
-                InitialAction = totalSeconds =>
+                InitialAction = () =>
                 {
                     InitAsteroids();
                     Camera.pos = Chased.pos + new Vector3(-100, -20, 20);
                     Camera.look = Chased.pos - Camera.pos;
-                    Camera.up = Vector3.Up;
+                    var cameraRight = Vector3.Cross(look, Vector3.Up);
+                    Camera.up = Vector3.Cross(cameraRight, look);
                 },
-                Action = totalSeconds =>
+                Action = () =>
                 {
+                    Camera.look = Chased.pos - Camera.pos;
+                    var cameraRight = Vector3.Cross(look, Vector3.Up);
+                    Camera.up = Vector3.Cross(cameraRight, look);
                 }
             });
 
             ShotList.Add(new Shot
             {
                 EndTime = 20.98,
-                InitialAction = totalSeconds =>
+                InitialAction = () =>
                 {
-                    Camera.pos = Chased.pos + new Vector3(-40, 2, 5);
+                    Camera.pos = ChaserLeader.pos + new Vector3(-100, 2, 5);
                     Camera.look = ChaserLeader.pos - Camera.pos;
                     Camera.up = Vector3.Up;
                 },
-                Action = totalSeconds =>
+                Action = () =>
                 {
+                    Camera.look = ChaserLeader.pos - Camera.pos;
+                    var cameraRight = Vector3.Cross(look, Vector3.Up);
+                    Camera.up = Vector3.Cross(cameraRight, look);
                 }
             });
 
@@ -167,19 +177,25 @@ namespace Steering
 
         private void InitAsteroids()
         {
-            var pos = Chased.pos;
+            var entryPos = Chased.pos;
 
-            Asteroid asteroid;
+            var asteroidList = new List<Asteroid>
+            {
+                new Asteroid(10)
+                {
+                    pos = entryPos + new Vector3(-500, 50, 50)
+                },
+                new Asteroid(10)
+                {
+                    pos = entryPos + new Vector3(-500, 50, -50)
+                }
+            };
 
-            const float minRadius = 2f;
-            const float maxRadius = 10f;
-            const float maxDiff = maxRadius - minRadius;
-            var random = new Random();
-
-            float size;
-            size = minRadius + (float)random.NextDouble() % maxDiff;
-            asteroid = new Asteroid(size);
-
+            foreach (var asteroid in asteroidList)
+            {
+                asteroid.LoadContent();
+                Game.Children.Add(asteroid);
+            }
         }
 
         public override void LoadContent()
@@ -190,20 +206,21 @@ namespace Steering
         {
             if (CurrentShot >= ShotList.Count) return;
 
-            var totalSeconds = gameTime.TotalGameTime.TotalSeconds;
-            var elapsedSeconds = gameTime.ElapsedGameTime.TotalSeconds;
+            var totalSeconds = MoviePlayer.PlayPosition.TotalSeconds;
+
+            if (totalSeconds < PlayPosition) return;
+
+            PlayPosition += gameTime.ElapsedGameTime.TotalSeconds;
 
             if (totalSeconds > ShotList[CurrentShot].EndTime)
             {
                 ++CurrentShot;
                 if (CurrentShot >= ShotList.Count) return;
 
-                ShotList[CurrentShot].InitialAction(totalSeconds);
-
-                elapsedSeconds = totalSeconds - ShotList[CurrentShot - 1].EndTime;
+                ShotList[CurrentShot].InitialAction();
             }
 
-            ShotList[CurrentShot].Action(elapsedSeconds);
+            ShotList[CurrentShot].Action();
         }
 
         public override void Draw(GameTime gameTime)

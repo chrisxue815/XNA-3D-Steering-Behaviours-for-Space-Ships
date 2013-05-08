@@ -178,8 +178,6 @@ namespace Steering
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (!IsActive) return;
-
             if (false)
             {
                 KeyboardState newState = Keyboard.GetState();

@@ -320,17 +320,41 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="StarTrek\Skybox.X">
-      <Name>Skybox</Name>
+    <Compile Include="StarTrek\models\skybox.X">
+      <Name>skybox</Name>
       <Importer>XImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="StarTrek\space.png">
-      <Name>space</Name>
+    <Compile Include="StarTrek\textures\skybox.png">
+      <Name>skybox</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="StarTrek\textures\asteroid1.tga">
+      <Name>asteroid1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="StarTrek\textures\asteroid2.tga">
+      <Name>asteroid2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="StarTrek\models\asteroid1.x">
+      <Name>asteroid1</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
+    </Compile>
+    <Compile Include="StarTrek\models\asteroid2.x">
+      <Name>asteroid2</Name>
+      <Importer>XImporter</Importer>
+      <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

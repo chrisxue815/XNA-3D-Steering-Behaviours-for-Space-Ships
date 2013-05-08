@@ -17,8 +17,8 @@ namespace Steering
         public SkyBox()
         {
             Game = XNAGame.Instance();
-            ModelName = "StarTrek/skybox";
-            TextureName = "StarTrek/space";
+            ModelName = "StarTrek/models/skybox";
+            TextureName = "StarTrek/textures/skybox";
         }
 
         public override void LoadContent()
@@ -49,7 +49,7 @@ namespace Steering
                     effect.Texture = Texture;
                     effect.AmbientLightColor = new Vector3(1, 1, 1);
                     effect.World = skytransforms[mesh.ParentBone.Index] *
-                                    Matrix.CreateScale(10000.0f) *
+                                    Matrix.CreateScale(2000.0f) *
                                     Matrix.CreateTranslation(Game.Camera.pos);
                     effect.View = Game.Camera.view;
                     effect.Projection = Game.Camera.projection;

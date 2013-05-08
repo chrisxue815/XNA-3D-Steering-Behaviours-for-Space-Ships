@@ -11,6 +11,8 @@ namespace Steering
     {
         private Game Game { get; set; }
 
+        private Texture2D Texture { get; set; }
+
         public Asteroid(float radius) : base(radius)
         {
             Game = XNAGame.Instance();
@@ -18,7 +20,9 @@ namespace Steering
 
         public override void LoadContent()
         {
-            model = Game.Content.Load<Model>("StarTrek/asteroid1");
+            //model = Game.Content.Load<Model>("StarTrek/models/asteroid1");
+            model = Game.Content.Load<Model>("sphere");
+            Texture = Game.Content.Load<Texture2D>("StarTrek/textures/asteroid1");
         }
 
         public override void Update(GameTime gameTime)
@@ -27,7 +31,11 @@ namespace Steering
 
         public override void Draw(GameTime gameTime)
         {
-            worldTransform = Matrix.CreateScale(radius) * Matrix.CreateTranslation(pos);
+            base.Draw(gameTime);
+
+            return;
+
+            worldTransform = Matrix.CreateScale(radius / 1494.79f) * Matrix.CreateTranslation(pos);
 
             if (model != null)
             {
@@ -35,10 +43,8 @@ namespace Steering
                 {
                     foreach (BasicEffect effect in mesh.Effects)
                     {
-                        effect.EnableDefaultLighting();
-                        effect.PreferPerPixelLighting = true;
+                        effect.Texture = Texture;
                         effect.World = worldTransform;
-                        effect.DiffuseColor = Color;
                         effect.Projection = XNAGame.Instance().Camera.getProjection();
                         effect.View = XNAGame.Instance().Camera.getView();
                     }

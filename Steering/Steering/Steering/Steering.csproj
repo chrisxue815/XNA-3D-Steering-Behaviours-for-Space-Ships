@@ -182,8 +182,6 @@
   <ItemGroup>
     <None Include="avoidance.properties" />
     <None Include="flocking.properties" />
-    <None Include="StarTrek\asteroid1.x" />
-    <None Include="StarTrek\asteroid2.x" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
