@@ -192,6 +192,11 @@ namespace Steering
             flags |= ((int)behaviour);
         }
 
+        public void turnOff(behaviour_type behaviour)
+        {
+            flags &= ~((int)behaviour);
+        }
+
         public void turnOffAll()
         {
             flags = (int) SteeringBehaviours.behaviour_type.none;
