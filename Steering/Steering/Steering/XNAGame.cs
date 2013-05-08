@@ -184,100 +184,106 @@ namespace Steering
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            
-            KeyboardState newState = Keyboard.GetState();
-            if (newState.IsKeyDown(Keys.F1))
-            {
-                if (!oldState.IsKeyDown(Keys.F1))
-                {
-                    useCamFighter = !useCamFighter;
-                }
-            }
-            if (newState.IsKeyDown(Keys.F2))
-            {
-                if (!oldState.IsKeyDown(Keys.F2))
-                {
-                    ClearWorld();
-                    Scenario.setUpArrive();
-                }
-            }
-            if (newState.IsKeyDown(Keys.F3))
-            {
-                if (!oldState.IsKeyDown(Keys.F3))
-                {
-                    ClearWorld();
-                    Scenario.setUpPursuit();
-                }
-            }
-            if (newState.IsKeyDown(Keys.F4))
-            {
-                if (!oldState.IsKeyDown(Keys.F4))
-                {
-                    ClearWorld();
-                    Scenario.setUpWander();
-                }
-            }
-            
-            if (newState.IsKeyDown(Keys.F5))
-            {
-                if (!oldState.IsKeyDown(Keys.F5))
-                {
-                    ClearWorld();
-                    Scenario.setUpStateMachineDemo();
-                }
-            }
-            if (newState.IsKeyDown(Keys.F6))
-            {
-                if (!oldState.IsKeyDown(Keys.F6))
-                {
-                    ClearWorld();
-                    Scenario.setUpBuckRogersDemo();
-                }
-            } 
-            if (newState.IsKeyDown(Keys.F7))
-            {
-                if (!oldState.IsKeyDown(Keys.F7))
-                {
-                    ClearWorld();
-                    Scenario.setUpFlockingDemo();
-                }
-            }
+            if (!IsActive) return;
 
-            if (newState.IsKeyDown(Keys.F8))
+            if (false)
             {
-                if (!oldState.IsKeyDown(Keys.F8))
+                KeyboardState newState = Keyboard.GetState();
+                if (newState.IsKeyDown(Keys.F1))
                 {
-                    ClearWorld();
-                    Scenario.setUpPathFindingDemo();
+                    if (!oldState.IsKeyDown(Keys.F1))
+                    {
+                        useCamFighter = !useCamFighter;
+                    }
                 }
-            }
-            
-            if (useCamFighter)
-            {
-                camera.pos = camFighter.pos;
-                camera.look = camFighter.look;
-                camera.up = camFighter.up;
-                camera.right = camFighter.right;
-            }
-            else
-            {
-                camera.up = Vector3.Up;
-                camera.right = Vector3.Cross(Camera.look, Camera.up);
-            }
-            //space.Partition();
-            for (int i = children.Count - 1; i >= 0; i--)
-            {
-                if (children[i].Alive == false)
+                if (newState.IsKeyDown(Keys.F2))
                 {
-                    children.Remove(children[i]);
+                    if (!oldState.IsKeyDown(Keys.F2))
+                    {
+                        ClearWorld();
+                        Scenario.setUpArrive();
+                    }
+                }
+                if (newState.IsKeyDown(Keys.F3))
+                {
+                    if (!oldState.IsKeyDown(Keys.F3))
+                    {
+                        ClearWorld();
+                        Scenario.setUpPursuit();
+                    }
+                }
+                if (newState.IsKeyDown(Keys.F4))
+                {
+                    if (!oldState.IsKeyDown(Keys.F4))
+                    {
+                        ClearWorld();
+                        Scenario.setUpWander();
+                    }
+                }
+
+                if (newState.IsKeyDown(Keys.F5))
+                {
+                    if (!oldState.IsKeyDown(Keys.F5))
+                    {
+                        ClearWorld();
+                        Scenario.setUpStateMachineDemo();
+                    }
+                }
+                if (newState.IsKeyDown(Keys.F6))
+                {
+                    if (!oldState.IsKeyDown(Keys.F6))
+                    {
+                        ClearWorld();
+                        Scenario.setUpBuckRogersDemo();
+                    }
+                }
+                if (newState.IsKeyDown(Keys.F7))
+                {
+                    if (!oldState.IsKeyDown(Keys.F7))
+                    {
+                        ClearWorld();
+                        Scenario.setUpFlockingDemo();
+                    }
+                }
+
+                if (newState.IsKeyDown(Keys.F8))
+                {
+                    if (!oldState.IsKeyDown(Keys.F8))
+                    {
+                        ClearWorld();
+                        Scenario.setUpPathFindingDemo();
+                    }
+                }
+
+                if (useCamFighter)
+                {
+                    camera.pos = camFighter.pos;
+                    camera.look = camFighter.look;
+                    camera.up = camFighter.up;
+                    camera.right = camFighter.right;
                 }
                 else
                 {
+                    camera.up = Vector3.Up;
+                    camera.right = Vector3.Cross(Camera.look, Camera.up);
+                }
+                //space.Partition();
+
+                oldState = newState;
+            }
+
+            for (int i = children.Count - 1; i >= 0; i--)
+            {
+                if (children[i].Alive)
+                {
                     children[i].Update(gameTime);
+                }
+                else
+                {
+                    children.Remove(children[i]);
                 }
             }
 
-            oldState = newState;
             base.Update(gameTime);
         }
 
@@ -287,7 +293,6 @@ namespace Steering
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            
             GraphicsDevice.Clear(Color.Aqua);
             spriteBatch.Begin();
 
