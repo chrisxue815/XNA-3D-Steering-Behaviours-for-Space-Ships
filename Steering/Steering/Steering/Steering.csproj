@@ -115,6 +115,7 @@
     <Compile Include="Entity.cs" />
     <Compile Include="Fighter.cs" />
     <Compile Include="StarTrek\Asteroid.cs" />
+    <Compile Include="StarTrek\HighSpeedTrail.cs" />
     <Compile Include="StarTrek\Particle3DSample\ParticleEmitter.cs" />
     <Compile Include="StarTrek\Particle3DSample\ParticleSettings.cs" />
     <Compile Include="StarTrek\Particle3DSample\ParticleSystem.cs" />
